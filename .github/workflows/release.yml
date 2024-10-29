@@ -80,7 +80,7 @@ jobs:
           DOCKER_IMAGE=lszeremeta/knows
           VERSION=${GITHUB_REF#refs/tags/v}
           TAGS="${DOCKER_IMAGE}:${VERSION}"
-          echo ::set-output name=tags::${TAGS}
+          echo "tags=${TAGS}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         id: buildx
