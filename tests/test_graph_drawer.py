@@ -1,5 +1,10 @@
 from unittest.mock import patch
 
+import matplotlib
+
+# Use 'Agg' backend for matplotlib to avoid GUI issues in headless environments
+matplotlib.use('Agg')
+
 import networkx as nx
 
 from knows.graph_drawer import GraphDrawer
