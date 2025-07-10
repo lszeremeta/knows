@@ -35,6 +35,7 @@ class OutputFormat:
             'graphml': self._to_graphml,
             'yarspg': self._to_yarspg,
             'csv': self._to_csv,
+            'cypher': self._to_cypher,
             'gexf': self._to_gexf,
             'gml': self._to_gml,
             'svg': self._to_svg,
@@ -130,6 +131,23 @@ class OutputFormat:
         edges_csv = edge_buffer.getvalue().strip()
 
         return nodes_csv, edges_csv
+
+    def _to_cypher(self) -> str:
+        """Converts the graph to Cypher format.
+
+        Returns:
+            str: The graph as a sequence of Cypher CREATE statements.
+        """
+        cypher_statements: list[str] = []
+        for node_id, properties in self.graph.graph.nodes(data=True):
+            label = properties.get('label', '')
+            props = ', '.join([f"{k}: \"{v}\"" for k, v in properties.items() if k != 'label'])
+            cypher_statements.append(f"CREATE ({node_id}:{label} {{{props}}})")
+        for source, target, properties in self.graph.graph.edges(data=True):
+            label = properties.get('label', '')
+            props = ', '.join([f"{k}: \"{v}\"" for k, v in properties.items() if k != 'label'])
+            cypher_statements.append(f"CREATE ({source})-[:{label} {{{props}}}]->({target})")
+        return '\n'.join(cypher_statements)
 
     def _to_svg(self) -> str:
         """Converts the graph to SVG format.

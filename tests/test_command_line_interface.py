@@ -25,10 +25,11 @@ def test_cli_default_args(monkeypatch):
                          [
                              (['prog', '10', '8'], 10, 8, 'graphml', False),
                              (['prog'], None, None, 'graphml', False),
-                             (['prog', '--format', 'json'], None, None, 'json', False),
-                             (['prog', '-d'], None, None, 'graphml', True),
                              (['prog', '10', '8', '--format', 'yarspg'], 10, 8, 'yarspg', False),
                              (['prog', '--format', 'csv'], None, None, 'csv', False),
+                             (['prog', '--format', 'cypher'], None, None, 'cypher', False),
+                             (['prog', '--format', 'json'], None, None, 'json', False),
+                             (['prog', '-d'], None, None, 'graphml', True),
                          ])
 def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw):
     """

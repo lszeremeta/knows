@@ -19,8 +19,10 @@ class CommandLineInterface:
         parser = argparse.ArgumentParser(
             description="Knows is a simple property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization.",
             prog='knows')
-        parser.add_argument("nodes", type=int, nargs='?', default=None, help="Number of nodes in the graph. Selected randomly if not specified.")
-        parser.add_argument("edges", type=int, nargs='?', default=None, help="Number of edges in the graph. Selected randomly if not specified.")
+        parser.add_argument("nodes", type=int, nargs='?', default=None,
+                            help="Number of nodes in the graph. Selected randomly if not specified.")
+        parser.add_argument("edges", type=int, nargs='?', default=None,
+                            help="Number of edges in the graph. Selected randomly if not specified.")
         parser.add_argument(
             "-f",
             "--format",
@@ -28,6 +30,7 @@ class CommandLineInterface:
                 'graphml',
                 'yarspg',
                 'csv',
+                'cypher',
                 'gexf',
                 'gml',
                 'svg',

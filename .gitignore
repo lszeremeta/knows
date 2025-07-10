@@ -8,6 +8,9 @@
 *.gml
 *.json
 
+# zip files
+*.zip
+
 # Created by https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,pycharm+all,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,python,windows,pycharm+all,visualstudiocode
 

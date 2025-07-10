@@ -9,7 +9,7 @@ enthusiasts.
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
-- **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, CSV, GEXF, GML, SVG, JSON, and others.
+- **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, CSV, Cypher, GEXF, GML, SVG, JSON, and others.
 - **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG format.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
@@ -124,19 +124,23 @@ knows -h
    ```shell
    knows -f csv > nodes.csv 2> edges.csv
    ```
-4. Create a 100-node, 50-edge graph in GraphML format:
+4. Create a 50-node, 20-edge graph in Cypher format:
+   ```shell
+   knows 50 20 -f cypher > graph.cypher
+   ```
+5. Create a 100-node, 50-edge graph in GraphML format:
    ```shell
     knows 100 50 > graph.graphml
     ```
-5. Create, save, and visualize a 100-node, 50-edge graph in SVG:
+6. Create, save, and visualize a 100-node, 50-edge graph in SVG:
    ```shell
    knows 100 50 -f svg -d > graph.svg
    ```
-6. Create, save a 100-node, 50-edge graph in SVG with a custom filename:
+7. Create, save a 100-node, 50-edge graph in SVG with a custom filename:
    ```shell
     knows 100 50 -f svg > graph.svg
     ```
-7. Create a graph in JSON format:
+8. Create a graph in JSON format:
    ```shell
    knows -f json > graph.json
    ```

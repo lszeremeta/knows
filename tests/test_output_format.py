@@ -18,6 +18,13 @@ def test_output_format_graphml():
     assert 'N1' in graphml_output
     assert 'N2' in graphml_output
     assert 'N3' in graphml_output
+    assert 'firstname' in graphml_output
+    assert 'lastname' in graphml_output
+    assert 'createDate' in graphml_output
+    assert graphml_output.count('<node') == 3  # One for each node
+    assert graphml_output.count('<edge') == 2  # One for each edge
+    assert graphml_output.count('knows') == 2  # One relationship for each edge
+    assert graphml_output.count('label') == 2  # One for each edge label
 
 
 def test_output_format_yarspg():
@@ -30,12 +37,14 @@ def test_output_format_yarspg():
     yarspg_output = output_format.to_format('yarspg')
     assert '(' in yarspg_output
     assert ')-({' in yarspg_output
-    assert 'knows' in yarspg_output
-    assert 'firstname' in yarspg_output
-    assert 'lastname' in yarspg_output
     assert 'N1' in yarspg_output
     assert 'N2' in yarspg_output
     assert 'N3' in yarspg_output
+    assert yarspg_output.count(')-({') == 2  # One for each edge
+    assert yarspg_output.count('knows') == 2  # One relationship for each edge
+    assert yarspg_output.count('firstname') == 3  # One for each node
+    assert yarspg_output.count('lastname') == 3  # One for each node
+    assert yarspg_output.count('createDate') == 2  # One for each edge
 
 
 def test_output_format_csv():
@@ -52,6 +61,31 @@ def test_output_format_csv():
     assert 'N1' in edges_csv
     assert 'N2' in nodes_csv
     assert 'N2' in edges_csv
+    assert 'knows' in edges_csv
+    assert 'createDate' in edges_csv
+    assert 'firstname' in nodes_csv
+    assert 'lastname' in nodes_csv
+    assert 'N3' not in nodes_csv  # Only 2 nodes in this test case
+    assert 'N3' not in edges_csv  # Only 2 nodes in this test case
+
+
+def test_output_format_cypher():
+    """Tests Cypher conversion for nodes and edges."""
+    graph = Graph(3, 1)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    cypher_output = output_format.to_format('cypher')
+    assert 'CREATE' in cypher_output
+    assert ']->(' in cypher_output
+    assert ')-[' in cypher_output
+    assert ':' in cypher_output
+    assert 'knows' in cypher_output
+    assert 'N1' in cypher_output
+    assert 'N2' in cypher_output
+    assert 'N3' in cypher_output
+    assert not cypher_output.endswith(';')
+    assert cypher_output.count('CREATE') == 4  # One for each node and one for the edge
+    assert cypher_output.count('knows') == 1  # One relationship creation
 
 
 def test_output_format_json():
@@ -69,6 +103,14 @@ def test_output_format_json():
     assert len(json_data['links']) == 1
     assert 'N1' in json_output
     assert 'N2' in json_output
+    assert 'N3' not in json_output  # Only 2 nodes in this test case
+    assert 'knows' in json_output
+    assert json_output.count('"id":') == 2  # One for each node
+    assert json_output.count('"source":') == 1  # One for the edge
+    assert json_output.count('"target":') == 1  # One for the edge
+    assert json_output.count('"createDate":') == 1  # One for the edge
+    assert json_output.count('"firstname":') == 2  # One for each node
+    assert json_output.count('"lastname":') == 2  # One for each node
 
 
 def test_output_format_gexf():
@@ -101,6 +143,12 @@ def test_output_format_gml():
     assert 'N1' in gml_output
     assert 'N2' in gml_output
     assert 'N3' in gml_output
+    assert 'knows' in gml_output
+    assert gml_output.count('node') == 3  # One for each node
+    assert gml_output.count('edge') == 2  # One for each edge
+    assert gml_output.count('createDate') == 2  # One for each edge
+    assert gml_output.count('firstname') == 3  # One for each node
+    assert gml_output.count('lastname') == 3  # One for each node
 
 
 def test_output_format_adjacency_list():
