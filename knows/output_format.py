@@ -1,4 +1,5 @@
 import io
+import csv
 import json
 
 import networkx as nx
@@ -30,10 +31,18 @@ class OutputFormat:
         Returns:
             str: The graph in the specified format.
         """
-        format_methods = {'graphml': self._to_graphml, 'yarspg': self._to_yarspg, 'gexf': self._to_gexf,
-            'gml': self._to_gml, 'svg': self._to_svg, 'adjacency_list': self._to_adjacency_list,
-            'multiline_adjacency_list': self._to_multiline_adjacency_list, 'edge_list': self._to_edge_list,
-            'json': self._to_json}
+        format_methods = {
+            'graphml': self._to_graphml,
+            'yarspg': self._to_yarspg,
+            'csv': self._to_csv,
+            'gexf': self._to_gexf,
+            'gml': self._to_gml,
+            'svg': self._to_svg,
+            'adjacency_list': self._to_adjacency_list,
+            'multiline_adjacency_list': self._to_multiline_adjacency_list,
+            'edge_list': self._to_edge_list,
+            'json': self._to_json,
+        }
         return format_methods[format_type]()
 
     def _to_graphml(self) -> str:
@@ -83,6 +92,44 @@ class OutputFormat:
         label = attributes.get('label', 'label')
         prop_list = ', '.join([f'"{key}": "{value}"' for key, value in attributes.items() if key != 'label'])
         return f"({u})-({{\"{label}\"}}[{prop_list}])->({v})"
+
+    def _to_csv(self) -> tuple[str, str]:
+        """Converts the graph to CSV format.
+
+        Returns:
+            tuple[str, str]: Nodes and edges in CSV format.
+        """
+        node_prop_keys: list[str] = []
+        for _, prop in self.graph.graph.nodes(data=True):
+            for key in prop.keys():
+                if key not in node_prop_keys:
+                    node_prop_keys.append(key)
+        node_headers = ['id'] + node_prop_keys
+
+        node_buffer = io.StringIO()
+        writer = csv.writer(node_buffer)
+        writer.writerow(node_headers)
+        for node_id, prop in self.graph.graph.nodes(data=True):
+            row = [node_id] + [prop.get(key, '') for key in node_prop_keys]
+            writer.writerow(row)
+        nodes_csv = node_buffer.getvalue().strip()
+
+        edge_prop_keys: list[str] = []
+        for _, _, prop in self.graph.graph.edges(data=True):
+            for key in prop.keys():
+                if key not in edge_prop_keys:
+                    edge_prop_keys.append(key)
+        edge_headers = ['id', 'id_from', 'id_to'] + edge_prop_keys
+
+        edge_buffer = io.StringIO()
+        writer = csv.writer(edge_buffer)
+        writer.writerow(edge_headers)
+        for edge_id, (source, target, prop) in enumerate(self.graph.graph.edges(data=True), start=1):
+            row = [f"E{edge_id}", source, target] + [prop.get(key, '') for key in edge_prop_keys]
+            writer.writerow(row)
+        edges_csv = edge_buffer.getvalue().strip()
+
+        return nodes_csv, edges_csv
 
     def _to_svg(self) -> str:
         """Converts the graph to SVG format.

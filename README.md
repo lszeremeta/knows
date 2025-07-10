@@ -9,7 +9,7 @@ enthusiasts.
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
-- **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, GEXF, GML, SVG, JSON, and others.
+- **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, CSV, GEXF, GML, SVG, JSON, and others.
 - **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG format.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
@@ -106,7 +106,7 @@ knows -h
 ### Options
 
 - `-h`, `--help`: Display the help message and exit the program.
-- `-f {graphml,yarspg,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`, `--format {graphml,yarspg,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:
+- `-f {graphml,yarspg,csv,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`, `--format {graphml,yarspg,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:
   Choose the format to output the graph. Default: `graphml`.
 - `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in the Docker.
 
@@ -120,19 +120,23 @@ knows -h
    ```shell
    knows 100 70 -f yarspg > graph.yarspg
    ```
-3. Create a 100-node, 50-edge graph in GraphML format:
+3. Create a random graph in CSV format and save to files (nodes are written to standard output, edges to standard error):
+   ```shell
+   knows -f csv > nodes.csv 2> edges.csv
+   ```
+4. Create a 100-node, 50-edge graph in GraphML format:
    ```shell
     knows 100 50 > graph.graphml
     ```
-4. Create, save, and visualize a 100-node, 50-edge graph in SVG:
+5. Create, save, and visualize a 100-node, 50-edge graph in SVG:
    ```shell
    knows 100 50 -f svg -d > graph.svg
    ```
-5. Create, save a 100-node, 50-edge graph in SVG with a custom filename:
+6. Create, save a 100-node, 50-edge graph in SVG with a custom filename:
    ```shell
     knows 100 50 -f svg > graph.svg
     ```
-6. Create a graph in JSON format:
+7. Create a graph in JSON format:
    ```shell
    knows -f json > graph.json
    ```

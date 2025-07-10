@@ -20,6 +20,12 @@ def main():
         formatted_output = output.to_format(cli.args.format)
         if cli.args.format == 'svg':
             sys.stdout.buffer.write(formatted_output.encode('utf-8'))
+        elif cli.args.format == 'csv':
+            nodes_csv, edges_csv = formatted_output
+
+            # Print nodes to stdout and edges to stderr
+            print(nodes_csv)
+            print(edges_csv, file=sys.stderr)
         else:
             print(formatted_output)
 

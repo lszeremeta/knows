@@ -1,14 +1,15 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,pycharm+all,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,python,windows,pycharm+all,visualstudiocode
-
 ### Outputs ###
 *.graphml
 *.yarspg
+*.csv
 *.svg
 !logo/*svg
 *.gexf
 *.gml
 *.json
+
+# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,python,windows,pycharm+all,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,python,windows,pycharm+all,visualstudiocode
 
 ### Linux ###
 *~

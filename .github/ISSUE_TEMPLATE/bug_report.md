@@ -23,9 +23,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add files sample and error message to help explain your problem.
 
 **Environment (please complete the following information):**
- - OS: [e.g. KDE Neon 5.19, macOS 10.15.6, Ubuntu 22.04.1, Windows 10]
+ - OS: [e.g. Ubuntu 24.04.1, Windows 11]
  - Python distribution [e.g. Anaconda, built into the OS, Python.org, WinPython]
- - Python version [e.g. 3.8.5, 3.7.8, 3.5.9, 3.11.1]
+ - Python version [e.g. 3.13.5]
 
 **Additional context**
 Add any other context about the problem here.
