@@ -1,5 +1,5 @@
-import io
 import csv
+import io
 import json
 
 import networkx as nx

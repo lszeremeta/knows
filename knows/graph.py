@@ -3,16 +3,41 @@ import random
 import networkx as nx
 from faker import Faker
 
+NODE_PROPERTY_GENERATORS: dict[str, callable] = {
+    'firstName': lambda f: f.first_name(),
+    'lastName': lambda f: f.last_name(),
+    'company': lambda f: f.company(),
+    'job': lambda f: f.job(),
+    'phoneNumber': lambda f: f.phone_number(),
+    'favoriteColor': lambda f: f.color_name(),
+}
+
+EDGE_PROPERTY_GENERATORS: dict[str, callable] = {
+    'createDate': lambda f: f.date(),
+    'meetingCity': lambda f: f.city(),
+    'strength': lambda f: f.random_int(min=1, max=100),
+}
+
+NODE_PROPERTIES = list(NODE_PROPERTY_GENERATORS.keys())
+EDGE_PROPERTIES = list(EDGE_PROPERTY_GENERATORS.keys())
+
+from typing import Optional, List
+
 
 class Graph:
-    def __init__(self, num_nodes: int, num_edges: int):
+    def __init__(self, num_nodes: int, num_edges: int,
+                 node_props: Optional[List[str]] = None,
+                 edge_props: Optional[List[str]] = None):
         self.graph = nx.DiGraph()
         self.num_nodes = num_nodes
         self.num_edges = num_edges
+        self.node_props = node_props or ['firstName', 'lastName']
+        self.edge_props = edge_props or ['createDate']
         self.faker = Faker()
 
     def generate(self) -> None:
         self._validate_parameters()
+        self._validate_properties()
         self._add_nodes()
         self._add_edges()
 
@@ -22,14 +47,29 @@ class Graph:
         if self.num_edges > self.num_nodes * (self.num_nodes - 1):
             raise ValueError("Too many edges for the given number of nodes.")
 
+    def _validate_properties(self) -> None:
+        for prop in self.node_props:
+            if prop not in NODE_PROPERTIES:
+                raise ValueError(f"Unknown node property: {prop}")
+        for prop in self.edge_props:
+            if prop not in EDGE_PROPERTIES:
+                raise ValueError(f"Unknown edge property: {prop}")
+
     def _add_nodes(self) -> None:
         for i in range(1, self.num_nodes + 1):
-            first_name, last_name = self.faker.first_name(), self.faker.last_name()
-            self.graph.add_node(f"N{i}", label='Person', firstname=first_name, lastname=last_name)
+            properties = {'label': 'Person'}
+            for prop in self.node_props:
+                generator = NODE_PROPERTY_GENERATORS[prop]
+                properties[prop] = generator(self.faker)
+            self.graph.add_node(f"N{i}", **properties)
 
     def _add_edges(self) -> None:
         nodes = list(self.graph.nodes)
         while len(self.graph.edges) < self.num_edges:
             u, v = random.sample(nodes, 2)
             if not self.graph.has_edge(u, v):
-                self.graph.add_edge(u, v, label='knows', createDate=self.faker.date())
+                properties = {'label': 'knows'}
+                for prop in self.edge_props:
+                    generator = EDGE_PROPERTY_GENERATORS[prop]
+                    properties[prop] = generator(self.faker)
+                self.graph.add_edge(u, v, **properties)

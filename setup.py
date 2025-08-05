@@ -13,8 +13,8 @@ setuptools.setup(
     version="1.0.0",
     author="Łukasz Szeremeta",
     author_email="l.szeremeta.dev+knows@gmail.com",
-    install_requires=["networkx>=3.0.0", "Faker>=19.0.0"],
-    extras_require={"draw": ["matplotlib>=3.7.0"]},
+    install_requires=["networkx>=3.2.0", "Faker>=36.0.0"],
+    extras_require={"draw": ["matplotlib>=3.8.4"]},
     tests_require=["pytest>=7.0.0"],
     license="MIT License",
     description="Property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization",
@@ -93,7 +93,7 @@ setuptools.setup(
         "svg",
         "data visualization",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     entry_points={
         "console_scripts": [
             "knows=knows.__main__:main",

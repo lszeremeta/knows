@@ -13,25 +13,40 @@ def test_cli_default_args(monkeypatch):
     Args:
         monkeypatch: A pytest fixture for monkey-patching.
     """
-    monkeypatch.setattr('sys.argv', ['prog', '5', '4'])
+    monkeypatch.setattr('sys.argv', ['prog', '-n', '5', '-e', '4'])
     cli = CommandLineInterface()
     assert cli.args.nodes == 5
     assert cli.args.edges == 4
     assert cli.args.format == 'graphml'
     assert not cli.args.draw
+    assert cli.args.node_props == ['firstName', 'lastName']
+    assert cli.args.edge_props == ['createDate']
 
 
-@pytest.mark.parametrize("args, expected_nodes, expected_edges, expected_format, expected_draw",
-                         [
-                             (['prog', '10', '8'], 10, 8, 'graphml', False),
-                             (['prog'], None, None, 'graphml', False),
-                             (['prog', '10', '8', '--format', 'yarspg'], 10, 8, 'yarspg', False),
-                             (['prog', '--format', 'csv'], None, None, 'csv', False),
-                             (['prog', '--format', 'cypher'], None, None, 'cypher', False),
-                             (['prog', '--format', 'json'], None, None, 'json', False),
-                             (['prog', '-d'], None, None, 'graphml', True),
-                         ])
-def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw):
+@pytest.mark.parametrize(
+    "args, expected_nodes, expected_edges, expected_format, expected_draw, node_props, edge_props",
+    [
+        (['prog', '-n', '10', '-e', '8'], 10, 8, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog'], None, None, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '-n', '10', '-e', '8', '--format', 'yarspg'], 10, 8, 'yarspg', False, ['firstName', 'lastName'],
+         ['createDate']),
+        (['prog', '--format', 'csv'], None, None, 'csv', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'cypher'], None, None, 'cypher', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'json'], None, None, 'json', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '-d'], None, None, 'graphml', True, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--node-props', 'favoriteColor', 'job'], None, None, 'graphml', False, ['favoriteColor', 'job'],
+         ['createDate']),
+        (['prog', '--edge-props', 'meetingCity'], None, None, 'graphml', False, ['firstName', 'lastName'],
+         ['meetingCity']),
+        (['prog', '-np', 'company', 'job'], None, None, 'graphml', False, ['company', 'job'], ['createDate']),
+        (['prog', '-ep', 'strength'], None, None, 'graphml', False, ['firstName', 'lastName'], ['strength']),
+        (['prog', '--all-props'], None, None, 'graphml', False,
+         ['firstName', 'lastName', 'company', 'job', 'phoneNumber', 'favoriteColor'],
+         ['createDate', 'meetingCity', 'strength']),
+    ],
+)
+def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw, node_props,
+                          edge_props):
     """
     Test if the CLI correctly parses various argument combinations.
 
@@ -52,3 +67,5 @@ def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, exp
     assert cli.args.edges == expected_edges
     assert cli.args.format == expected_format
     assert cli.args.draw == expected_draw
+    assert cli.args.node_props == node_props
+    assert cli.args.edge_props == edge_props

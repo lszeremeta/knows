@@ -32,11 +32,38 @@ def test_graph_node_attributes_are_correctly_set():
     """
     Test if the node attributes are correctly set in the graph.
 
-    Ensures that each node in the graph has the expected attributes: 'firstname', 'lastname', and 'label'.
+    Ensures that each node in the graph has the expected attributes: 'firstName', 'lastName', and 'label'.
     """
     graph = Graph(3, 2)
     graph.generate()
     for _, attributes in graph.graph.nodes(data=True):
-        assert 'firstname' in attributes
-        assert 'lastname' in attributes
+        assert 'firstName' in attributes
+        assert 'lastName' in attributes
         assert attributes['label'] == 'Person'
+
+
+def test_graph_custom_properties():
+    """Ensure custom node and edge properties are applied."""
+    graph = Graph(
+        3,
+        1,
+        node_props=['firstName', 'favoriteColor', 'job'],
+        edge_props=['createDate', 'meetingCity'],
+    )
+    graph.generate()
+    for _, attributes in graph.graph.nodes(data=True):
+        assert 'firstName' in attributes
+        assert 'favoriteColor' in attributes
+        assert 'job' in attributes
+        assert 'lastName' not in attributes
+    for _, _, attributes in graph.graph.edges(data=True):
+        assert 'createDate' in attributes
+        assert 'meetingCity' in attributes
+        assert 'strength' not in attributes
+
+
+def test_invalid_property_name_raises_error():
+    """Unknown property names should raise ValueError."""
+    with pytest.raises(ValueError):
+        graph = Graph(2, 1, node_props=['unknown'])
+        graph.generate()

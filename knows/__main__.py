@@ -13,7 +13,9 @@ def main():
         num_nodes = cli.args.nodes or random.randint(2, 100)
         num_edges = cli.args.edges or random.randint(num_nodes // 2, num_nodes)
 
-        graph = Graph(num_nodes, num_edges)
+        graph = Graph(num_nodes, num_edges,
+                      node_props=cli.args.node_props,
+                      edge_props=cli.args.edge_props)
         graph.generate()
 
         output = OutputFormat(graph)
