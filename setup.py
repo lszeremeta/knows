@@ -17,7 +17,7 @@ setuptools.setup(
     extras_require={"draw": ["matplotlib>=3.8.4"]},
     tests_require=["pytest>=7.0.0"],
     license="MIT License",
-    description="Property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization",
+    description="Powerful and user-friendly property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lszeremeta/knows",

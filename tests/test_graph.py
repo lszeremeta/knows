@@ -67,3 +67,23 @@ def test_invalid_property_name_raises_error():
     with pytest.raises(ValueError):
         graph = Graph(2, 1, node_props=['unknown'])
         graph.generate()
+
+
+def test_graph_seed_reproducibility():
+    """Graphs generated with the same seed should be identical."""
+    graph1 = Graph(5, 4, seed=42)
+    graph1.generate()
+    graph2 = Graph(5, 4, seed=42)
+    graph2.generate()
+    assert list(graph1.graph.nodes(data=True)) == list(graph2.graph.nodes(data=True))
+    assert list(graph1.graph.edges(data=True)) == list(graph2.graph.edges(data=True))
+
+
+def test_graph_seed_variation():
+    """Different seeds should yield different graphs."""
+    graph1 = Graph(5, 4, seed=1)
+    graph1.generate()
+    graph2 = Graph(5, 4, seed=2)
+    graph2.generate()
+    assert list(graph1.graph.nodes(data=True)) != list(graph2.graph.nodes(data=True)) or \
+           list(graph1.graph.edges(data=True)) != list(graph2.graph.edges(data=True))

@@ -2,8 +2,9 @@
 
 [![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10605343.svg)](https://doi.org/10.5281/zenodo.10605343)
 
-Knows is a user-friendly tool for benchmarking property graphs. These graphs are crucial in many fields. Knows supports
-multiple output formats and visualization capabilities, making it a go-to tool for educators, researchers, and data
+Knows is a powerful and user-friendly tool for benchmarking property graphs. These graphs are crucial in many fields.
+Knows supports
+multiple output formats and visualization capabilities, making it a go-to tool for researchers, educators and data
 enthusiasts.
 
 ## Key Features 🚀
@@ -16,6 +17,10 @@ enthusiasts.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
+- **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option.
+
+> **Note on reproducibility:** The `-s`/`--seed` option makes the random aspects of graph generation deterministic
+> within the same software environment. Results may still differ across versions of Python or dependencies.
 
 ## Graph Structure
 
@@ -30,7 +35,7 @@ enthusiasts.
 
 ## Installation 🛠️
 
-You can install knows via PyPI Docker or run it from the source code.
+You can install knows via PyPI, Docker or run it from the source code.
 
 ### Install via PyPI
 
@@ -95,28 +100,34 @@ You can install knows via PyPI Docker or run it from the source code.
 ### Basic Usage
 
 ```shell
-knows [options]
+knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}]
+             [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]] [-ep [{createDate,meetingCity,strength} ...]] [-a] [-d]
+             [output]
 ```
 
-To view all available options, use:
-
-```shell
-knows -h
-```
+> Available options may vary depending on the version. To display all available options with their descriptions use
+`knows -h`.
 
 ### Options
 
-- `-h`, `--help`: Display the help message and exit the program.
-- `-n`, `--nodes`: Specify the number of nodes in the graph. Selected randomly if not provided.
-- `-e`, `--edges`: Specify the number of edges in the graph. Selected randomly if not provided.
-- `-f {graphml,yarspg,csv,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,
-  `--format {graphml,yarspg,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:
-  Choose the format to output the graph. Default: `graphml`.
-- `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in the Docker.
-- `-np`, `--node-props`: Space-separated node properties to include. Available: firstName, lastName, favoriteColor,
-  company, job, phoneNumber.
-- `-ep`, `--edge-props`: Space-separated edge properties to include. Available: createDate, meetingCity, strength.
+### Options
+
+- `-h`, `--help`: Show help message and exit.
+- `-n NODES`, `--nodes NODES`: Number of nodes in the graph. Selected randomly if not specified.
+- `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
+- `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results.
+- `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
+  `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
+  Format to output the graph. Default: `graphml`.
+- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]`,  
+  `--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]`:  
+  Space-separated node properties. Available: firstName, lastName, company, job, phoneNumber, favoriteColor.
+- `-ep [{createDate,meetingCity,strength} ...]`,  
+  `--edge-props [{createDate,meetingCity,strength} ...]`:  
+  Space-separated edge properties. Available: createDate, meetingCity, strength.
 - `-a`, `--all-props`: Use all available node and edge properties.
+- `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in Docker.  
+  If you want to generate an image of the graph, use the `svg` output format and save it to a file.
 
 You may also provide an optional path at the end of the command to save the output directly to a file. For the CSV
 format, two
@@ -182,6 +193,13 @@ files will be created with suffixes `_nodes.csv` and `_edges.csv`.
    # or
    knows -a -f yarspg > graph.yarspg
    ```
+11. Generate a reproducible graph in CSV by setting a seed:
+   ```shell
+   knows -n 3 -e 2 -s -f csv 43
+   ```
+
+Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
+remain unchanged.
 
 ## Contribute to Knows 👥
 

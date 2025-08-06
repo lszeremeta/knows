@@ -22,6 +22,7 @@ def test_cli_default_args(monkeypatch):
     assert not cli.args.draw
     assert cli.args.node_props == ['firstName', 'lastName']
     assert cli.args.edge_props == ['createDate']
+    assert cli.args.seed is None
     assert cli.args.output is None
 
 
@@ -53,6 +54,7 @@ def test_cli_default_args(monkeypatch):
         (['prog', '--all-props'], None, None, 'graphml', False,
          ['firstName', 'lastName', 'company', 'job', 'phoneNumber', 'favoriteColor'],
          ['createDate', 'meetingCity', 'strength']),
+        (['prog', '--seed', '42'], None, None, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
     ],
 )
 def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw, node_props,
@@ -79,6 +81,10 @@ def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, exp
     assert cli.args.draw == expected_draw
     assert cli.args.node_props == node_props
     assert cli.args.edge_props == edge_props
+    if '--seed' in args or '-s' in args:
+        assert cli.args.seed == 42
+    else:
+        assert cli.args.seed is None
 
 
 def test_cli_output_file(monkeypatch, tmp_path):
@@ -92,3 +98,10 @@ def test_cli_output_file(monkeypatch, tmp_path):
     monkeypatch.setattr('sys.argv', ['prog', str(output_file)])
     cli = CommandLineInterface()
     assert cli.args.output == str(output_file)
+
+
+def test_cli_seed_short_option(monkeypatch):
+    """Ensure short seed option is parsed."""
+    monkeypatch.setattr('sys.argv', ['prog', '-s', '123'])
+    cli = CommandLineInterface()
+    assert cli.args.seed == 123

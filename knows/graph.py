@@ -27,13 +27,17 @@ from typing import Optional, List
 class Graph:
     def __init__(self, num_nodes: int, num_edges: int,
                  node_props: Optional[List[str]] = None,
-                 edge_props: Optional[List[str]] = None):
+                 edge_props: Optional[List[str]] = None,
+                 seed: Optional[int] = None):
         self.graph = nx.DiGraph()
         self.num_nodes = num_nodes
         self.num_edges = num_edges
         self.node_props = node_props or ['firstName', 'lastName']
         self.edge_props = edge_props or ['createDate']
+        self.random = random.Random(seed)
         self.faker = Faker()
+        if seed is not None:
+            self.faker.seed_instance(seed)
 
     def generate(self) -> None:
         self._validate_parameters()
@@ -66,7 +70,7 @@ class Graph:
     def _add_edges(self) -> None:
         nodes = list(self.graph.nodes)
         while len(self.graph.edges) < self.num_edges:
-            u, v = random.sample(nodes, 2)
+            u, v = self.random.sample(nodes, 2)
             if not self.graph.has_edge(u, v):
                 properties = {'label': 'knows'}
                 for prop in self.edge_props:

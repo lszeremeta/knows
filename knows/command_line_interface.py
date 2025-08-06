@@ -19,8 +19,18 @@ class CommandLineInterface:
         """
 
         parser = argparse.ArgumentParser(
-            description="Knows is a simple property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization.",
-            prog='knows')
+            description=(
+                "Knows is a powerful and user-friendly property graph benchmark that creates graphs "
+                "with specified node and edge numbers, supporting multiple "
+                "output formats and visualization."
+            ),
+            prog="knows",
+            epilog=(
+                "Note on reproducibility: The -s/--seed option ensures "
+                "deterministic results in the same environment, but outputs may "
+                "differ across Python or dependency versions. See more on GitHub: https://github.com/lszeremeta/knows"
+            ),
+        )
         parser.add_argument(
             "-n",
             "--nodes",
@@ -38,6 +48,13 @@ class CommandLineInterface:
             help=(
                 "Number of edges in the graph. Selected randomly if not specified."
             ),
+        )
+        parser.add_argument(
+            "-s",
+            "--seed",
+            type=int,
+            default=None,
+            help="Seed for random number generation to ensure reproducible results.",
         )
         parser.add_argument(
             "-f",

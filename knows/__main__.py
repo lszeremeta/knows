@@ -11,12 +11,14 @@ from .output_format import OutputFormat
 def main():
     try:
         cli = CommandLineInterface()
-        num_nodes = cli.args.nodes or random.randint(2, 100)
-        num_edges = cli.args.edges or random.randint(num_nodes // 2, num_nodes)
+        rng = random.Random(cli.args.seed)
+        num_nodes = cli.args.nodes or rng.randint(2, 100)
+        num_edges = cli.args.edges or rng.randint(num_nodes // 2, num_nodes)
 
         graph = Graph(num_nodes, num_edges,
                       node_props=cli.args.node_props,
-                      edge_props=cli.args.edge_props)
+                      edge_props=cli.args.edge_props,
+                      seed=cli.args.seed)
         graph.generate()
 
         output = OutputFormat(graph)
