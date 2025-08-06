@@ -90,6 +90,15 @@ class CommandLineInterface:
         )
         parser.add_argument("-d", "--draw", action="store_true",
                             help="Generate an image of the graph (default is no image). This option may not work in the Docker. If you want to generate an image of the graph, use the svg output format and save it to a file.")
+        parser.add_argument(
+            "output",
+            nargs="?",
+            default=None,
+            help=(
+                "Optional path to save the graph. For CSV format two files will be created: "
+                "*_nodes.csv and *_edges.csv."
+            ),
+        )
         args = parser.parse_args()
         if args.all_props:
             args.node_props = NODE_PROPERTIES

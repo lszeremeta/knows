@@ -163,3 +163,33 @@ def test_output_format_adjacency_list():
     assert 'N1' in adjacency_list_output
     assert 'N2' in adjacency_list_output
     assert 'N3' in adjacency_list_output
+
+
+def test_output_format_multiline_adjacency_list():
+    """Tests if the graph is converted to multiline adjacency list format."""
+    graph = Graph(3, 2)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    multiline_output = output_format.to_format('multiline_adjacency_list')
+    assert 'N1' in multiline_output
+    assert len(multiline_output.splitlines()) >= 3
+
+
+def test_output_format_edge_list():
+    """Tests if the graph is converted to edge list format."""
+    graph = Graph(3, 2)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    edge_list_output = output_format.to_format('edge_list')
+    assert 'knows' in edge_list_output
+    assert len(edge_list_output.splitlines()) == 2
+
+
+def test_output_format_svg():
+    """Tests if the graph is converted to SVG format."""
+    graph = Graph(3, 2)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    svg_output = output_format.to_format('svg')
+    assert '<svg' in svg_output
+    assert '</svg>' in svg_output

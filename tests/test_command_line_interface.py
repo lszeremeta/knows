@@ -1,14 +1,15 @@
+"""Tests for the command-line interface argument parsing."""
+
 import pytest
 
 from knows.command_line_interface import CommandLineInterface
 
 
 def test_cli_default_args(monkeypatch):
-    """
-    Test if the CLI sets default arguments correctly.
+    """Test if the CLI sets default arguments correctly.
 
-    Checks if the CommandLineInterface sets default values correctly
-    when no optional arguments are provided, but only mandatory ones.
+    Checks if the CommandLineInterface sets default values correctly when
+    no optional arguments are provided, but only mandatory ones.
 
     Args:
         monkeypatch: A pytest fixture for monkey-patching.
@@ -21,6 +22,7 @@ def test_cli_default_args(monkeypatch):
     assert not cli.args.draw
     assert cli.args.node_props == ['firstName', 'lastName']
     assert cli.args.edge_props == ['createDate']
+    assert cli.args.output is None
 
 
 @pytest.mark.parametrize(
@@ -33,6 +35,14 @@ def test_cli_default_args(monkeypatch):
         (['prog', '--format', 'csv'], None, None, 'csv', False, ['firstName', 'lastName'], ['createDate']),
         (['prog', '--format', 'cypher'], None, None, 'cypher', False, ['firstName', 'lastName'], ['createDate']),
         (['prog', '--format', 'json'], None, None, 'json', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'gexf'], None, None, 'gexf', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'gml'], None, None, 'gml', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'svg'], None, None, 'svg', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'adjacency_list'], None, None, 'adjacency_list', False, ['firstName', 'lastName'],
+         ['createDate']),
+        (['prog', '--format', 'multiline_adjacency_list'], None, None, 'multiline_adjacency_list', False,
+         ['firstName', 'lastName'], ['createDate']),
+        (['prog', '--format', 'edge_list'], None, None, 'edge_list', False, ['firstName', 'lastName'], ['createDate']),
         (['prog', '-d'], None, None, 'graphml', True, ['firstName', 'lastName'], ['createDate']),
         (['prog', '--node-props', 'favoriteColor', 'job'], None, None, 'graphml', False, ['favoriteColor', 'job'],
          ['createDate']),
@@ -47,11 +57,11 @@ def test_cli_default_args(monkeypatch):
 )
 def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw, node_props,
                           edge_props):
-    """
-    Test if the CLI correctly parses various argument combinations.
+    """Test parsing of various command-line argument combinations.
 
-    Checks if the CommandLineInterface correctly interprets different combinations
-    of command-line arguments, including default values, optional flags, and their absence.
+    Checks if the CommandLineInterface correctly interprets different
+    combinations of command-line arguments, including default values,
+    optional flags, and their absence.
 
     Args:
         monkeypatch: A pytest fixture for monkey-patching.
@@ -69,3 +79,16 @@ def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, exp
     assert cli.args.draw == expected_draw
     assert cli.args.node_props == node_props
     assert cli.args.edge_props == edge_props
+
+
+def test_cli_output_file(monkeypatch, tmp_path):
+    """Test if CLI correctly parses optional output file path.
+
+    Args:
+        monkeypatch: A pytest fixture for monkey-patching.
+        tmp_path (pathlib.Path): Temporary directory for output files.
+    """
+    output_file = tmp_path / "graph.graphml"
+    monkeypatch.setattr('sys.argv', ['prog', str(output_file)])
+    cli = CommandLineInterface()
+    assert cli.args.output == str(output_file)

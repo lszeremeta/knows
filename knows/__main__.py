@@ -1,5 +1,6 @@
 import random
 import sys
+from pathlib import Path
 
 from .command_line_interface import CommandLineInterface
 from .graph import Graph
@@ -20,16 +21,28 @@ def main():
 
         output = OutputFormat(graph)
         formatted_output = output.to_format(cli.args.format)
-        if cli.args.format == 'svg':
-            sys.stdout.buffer.write(formatted_output.encode('utf-8'))
-        elif cli.args.format == 'csv':
-            nodes_csv, edges_csv = formatted_output
-
-            # Print nodes to stdout and edges to stderr
-            print(nodes_csv)
-            print(edges_csv, file=sys.stderr)
+        if cli.args.output:
+            output_path = Path(cli.args.output)
+            if cli.args.format == 'csv':
+                nodes_csv, edges_csv = formatted_output
+                base = output_path.with_suffix('')
+                nodes_path = base.with_name(base.name + '_nodes').with_suffix('.csv')
+                edges_path = base.with_name(base.name + '_edges').with_suffix('.csv')
+                nodes_path.write_text(nodes_csv, encoding='utf-8')
+                edges_path.write_text(edges_csv, encoding='utf-8')
+            else:
+                output_path.write_text(formatted_output, encoding='utf-8')
         else:
-            print(formatted_output)
+            if cli.args.format == 'svg':
+                sys.stdout.buffer.write(formatted_output.encode('utf-8'))
+            elif cli.args.format == 'csv':
+                nodes_csv, edges_csv = formatted_output
+
+                # Print nodes to stdout and edges to stderr
+                print(nodes_csv)
+                print(edges_csv, file=sys.stderr)
+            else:
+                print(formatted_output)
 
         if cli.args.draw:
             try:

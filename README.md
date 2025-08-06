@@ -11,6 +11,7 @@ enthusiasts.
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
 - **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, CSV, Cypher, GEXF, GML, SVG, JSON, and
   others.
+- **Flexible Output Options**: Display results in the console, redirect them, or save them directly to a file.
 - **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG format.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
@@ -117,44 +118,69 @@ knows -h
 - `-ep`, `--edge-props`: Space-separated edge properties to include. Available: createDate, meetingCity, strength.
 - `-a`, `--all-props`: Use all available node and edge properties.
 
+You may also provide an optional path at the end of the command to save the output directly to a file. For the CSV
+format, two
+files will be created with suffixes `_nodes.csv` and `_edges.csv`.
+
 ### Practical Examples 🌟
 
-1. Create a random graph in GraphML format:
+1. Create a random graph in GraphML format and show it:
    ```shell
    knows
    ```
 2. Create a 100-node, 70-edge graph in [YARS-PG format](https://github.com/lszeremeta/yarspg):
    ```shell
    knows -n 100 -e 70 -f yarspg > graph.yarspg
+   # or
+   knows -n 100 -e 70 -f yarspg graph.yarspg
    ```
 3. Create a random graph in CSV format and save to files (nodes are written to standard output, edges to standard
    error):
    ```shell
    knows -f csv > nodes.csv 2> edges.csv
+   # or
+   knows -f csv graph.csv
    ```
+   The latter command creates `graph_nodes.csv` and `graph_edges.csv`.
 4. Create a 50-node, 20-edge graph in Cypher format:
    ```shell
    knows -n 50 -e 20 -f cypher > graph.cypher
+   # or
+   knows -n 50 -e 20 -f cypher graph.cypher
    ```
 5. Create a 100-node, 50-edge graph in GraphML format:
    ```shell
-    knows -n 100 -e 50 > graph.graphml
-    ```
+   knows -n 100 -e 50 > graph.graphml
+   # or
+   knows -n 100 -e 50 graph.graphml
+   ```
 6. Create, save, and visualize a 100-node, 50-edge graph in SVG:
    ```shell
    knows -n 100 -e 50 -f svg -d > graph.svg
+   # or
+   knows -n 100 -e 50 -f svg -d graph.svg
    ```
-7. Create, save a 100-node, 50-edge graph in SVG with a custom filename:
+7. Create, save a 100-node, 50-edge graph in SVG:
    ```shell
-    knows -n 100 -e 50 -f svg > graph.svg
-    ```
+   knows -n 100 -e 50 -f svg > graph.svg
+   # or
+   knows -n 100 -e 50 -f svg graph.svg
+   ```
 8. Create a graph in JSON format:
    ```shell
    knows -f json > graph.json
+   # or
+   knows -f json graph.json
    ```
-9. Create a graph with custom properties:
+9. Create a graph with custom properties (20 nodes, 10 edges) and show it:
    ```shell
    knows -n 20 -e 10 --node-props firstName favoriteColor job --edge-props meetingCity
+   ```
+10. Create a graph with all possible properties in YARS-PG format and save it to file:
+   ```shell
+   knows -a -f yarspg > graph.yarspg
+   # or
+   knows -a -f yarspg > graph.yarspg
    ```
 
 ## Contribute to Knows 👥
