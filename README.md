@@ -17,7 +17,8 @@ enthusiasts.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
-- **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option.
+- **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected
+  output format.
 
 > **Note on reproducibility:** The `-s`/`--seed` option makes the random aspects of graph generation deterministic
 > within the same software environment. Results may still differ across versions of Python or dependencies.
@@ -115,7 +116,8 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-h`, `--help`: Show help message and exit.
 - `-n NODES`, `--nodes NODES`: Number of nodes in the graph. Selected randomly if not specified.
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
-- `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results.
+- `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
+  output formats).
 - `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
   `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
   Format to output the graph. Default: `graphml`.
@@ -193,13 +195,19 @@ files will be created with suffixes `_nodes.csv` and `_edges.csv`.
    # or
    knows -a -f yarspg > graph.yarspg
    ```
-11. Generate a reproducible graph in CSV by setting a seed:
+11. Generate a reproducible graph in CSV and by setting a seed:
    ```shell
    knows -n 3 -e 2 -s -f csv 43
    ```
 
 Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
 remain unchanged.
+
+12. Generate the same graph as above but in YARS-PG format:
+
+   ```shell
+   knows -n 3 -e 2 -s -f yarspg 43
+   ```
 
 ## Contribute to Knows 👥
 

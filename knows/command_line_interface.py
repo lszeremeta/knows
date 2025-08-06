@@ -54,7 +54,7 @@ class CommandLineInterface:
             "--seed",
             type=int,
             default=None,
-            help="Seed for random number generation to ensure reproducible results.",
+            help="Seed for random number generation to ensure reproducible results (also between various output formats).",
         )
         parser.add_argument(
             "-f",
