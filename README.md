@@ -42,9 +42,9 @@ enthusiasts.
 - Additional edge properties:
     - `lastMeetingCity`
     - `meetingCount` [1..10000]
+- Edges have random nodes, avoiding cycles.
 - If edges connect the same nodes in both directions, the paired edges share `lastMeetingCity`, `lastMeetingDate`, and
   `meetingCount` values.
-- Edges have random nodes, avoiding cycles.
 
 ## Installation 🛠️
 
@@ -135,8 +135,7 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
   `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
   Format to output the graph. Default: `graphml`.
--
-`-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,  
+- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,  
 `--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: firstName, lastName, company, job, phoneNumber, favoriteColor,
 postalAddress, friendCount, preferredContactMethod.
