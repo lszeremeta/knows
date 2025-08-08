@@ -137,11 +137,11 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
   Format to output the graph. Default: `graphml`.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,  
 `--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
-Space-separated node properties. Available: firstName, lastName, company, job, phoneNumber, favoriteColor,
-postalAddress, friendCount, preferredContactMethod.
+Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
+`postalAddress`, `friendCount`, `preferredContactMethod`.
 - `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
-  Space-separated edge properties. Available: strength, lastMeetingCity, lastMeetingDate, meetingCount.
+  Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`.
 - `-ap`, `--all-props`: Use all available node and edge properties.
 - `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in Docker.  
   If you want to generate an image of the graph, use the `svg` output format and save it to a file.
