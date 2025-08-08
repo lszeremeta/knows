@@ -38,7 +38,7 @@ enthusiasts.
     - `phoneNumber`
     - `postalAddress`
     - `friendCount` [1..1000]
-    - `preferredContactMethod` (`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`)
+    - `preferredContactMethod` [`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`]
 - Additional edge properties:
     - `lastMeetingCity`
     - `meetingCount` [1..10000]
