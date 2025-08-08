@@ -92,7 +92,7 @@ class CommandLineInterface:
             "--edge-props",
             nargs='*',
             choices=EDGE_PROPERTIES,
-            default=['createDate'],
+            default=['strength', 'lastMeetingDate'],
             help=(
                     "Space-separated edge properties. Available: "
                     + ', '.join(EDGE_PROPERTIES)
@@ -100,7 +100,7 @@ class CommandLineInterface:
             ),
         )
         parser.add_argument(
-            "-a",
+            "-ap",
             "--all-props",
             action="store_true",
             help="Use all available node and edge properties.",

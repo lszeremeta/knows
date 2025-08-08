@@ -20,7 +20,8 @@ def test_output_format_graphml():
     assert 'N3' in graphml_output
     assert 'firstName' in graphml_output
     assert 'lastName' in graphml_output
-    assert 'createDate' in graphml_output
+    assert 'strength' in graphml_output
+    assert 'lastMeetingDate' in graphml_output
     assert graphml_output.count('<node') == 3  # One for each node
     assert graphml_output.count('<edge') == 2  # One for each edge
     assert graphml_output.count('knows') == 2  # One relationship for each edge
@@ -44,7 +45,8 @@ def test_output_format_yarspg():
     assert yarspg_output.count('knows') == 2  # One relationship for each edge
     assert yarspg_output.count('firstName') == 3  # One for each node
     assert yarspg_output.count('lastName') == 3  # One for each node
-    assert yarspg_output.count('createDate') == 2  # One for each edge
+    assert yarspg_output.count('strength') == 2  # One for each edge
+    assert yarspg_output.count('lastMeetingDate') == 2  # One for each edge
 
 
 def test_output_format_csv():
@@ -54,7 +56,7 @@ def test_output_format_csv():
     output_format = OutputFormat(graph)
     nodes_csv, edges_csv = output_format.to_format('csv')
     assert 'id,label,firstName,lastName' in nodes_csv
-    assert 'id,id_from,id_to,label,createDate' in edges_csv
+    assert 'id,id_from,id_to,label,strength,lastMeetingDate' in edges_csv
     assert len(nodes_csv.splitlines()) == 3  # Header + 2 nodes
     assert len(edges_csv.splitlines()) == 2  # Header + 1 edge
     assert 'N1' in nodes_csv
@@ -62,7 +64,8 @@ def test_output_format_csv():
     assert 'N2' in nodes_csv
     assert 'N2' in edges_csv
     assert 'knows' in edges_csv
-    assert 'createDate' in edges_csv
+    assert 'strength' in edges_csv
+    assert 'lastMeetingDate' in edges_csv
     assert 'firstName' in nodes_csv
     assert 'lastName' in nodes_csv
     assert 'N3' not in nodes_csv  # Only 2 nodes in this test case
@@ -108,7 +111,8 @@ def test_output_format_json():
     assert json_output.count('"id":') == 2  # One for each node
     assert json_output.count('"source":') == 1  # One for the edge
     assert json_output.count('"target":') == 1  # One for the edge
-    assert json_output.count('"createDate":') == 1  # One for the edge
+    assert json_output.count('"strength":') == 1  # One for the edge
+    assert json_output.count('"lastMeetingDate":') == 1  # One for the edge
     assert json_output.count('"firstName":') == 2  # One for each node
     assert json_output.count('"lastName":') == 2  # One for each node
 
@@ -146,7 +150,8 @@ def test_output_format_gml():
     assert 'knows' in gml_output
     assert gml_output.count('node') == 3  # One for each node
     assert gml_output.count('edge') == 2  # One for each edge
-    assert gml_output.count('createDate') == 2  # One for each edge
+    assert gml_output.count('strength') == 2  # One for each edge
+    assert gml_output.count('lastMeetingDate') == 2  # One for each edge
     assert gml_output.count('firstName') == 3  # One for each node
     assert gml_output.count('lastName') == 3  # One for each node
 

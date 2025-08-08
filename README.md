@@ -29,9 +29,21 @@ enthusiasts.
 - Creates directed graphs.
 - Nodes are labeled `Person` with unique IDs (`N1, N2, N3, ..., Nn`).
 - Nodes feature `firstName` and `lastName` properties by default.
-- Edges are labeled `knows` and include a `createDate` property by default.
-- Additional node properties: `favoriteColor`, `company`, `job`, `phoneNumber`.
-- Additional edge properties: `meetingCity`, `strength`.
+- Edges are labeled `knows` and include `strength` [1..100] and `lastMeetingDate` [1955-01-01..2025-06-28] properties by
+  default.
+- Additional node properties:
+    - `favoriteColor`
+    - `company`
+    - `job`
+    - `phoneNumber`
+    - `postalAddress`
+    - `friendCount` [1..1000]
+    - `preferredContactMethod` (`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`)
+- Additional edge properties:
+    - `lastMeetingCity`
+    - `meetingCount` [1..10000]
+- If edges connect the same nodes in both directions, the paired edges share `lastMeetingCity`, `lastMeetingDate`, and
+  `meetingCount` values.
 - Edges have random nodes, avoiding cycles.
 
 ## Installation 🛠️
@@ -102,18 +114,20 @@ You can install knows via PyPI, Docker or run it from the source code.
 
 ```shell
 knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}]
-             [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]] [-ep [{createDate,meetingCity,strength} ...]] [-a] [-d]
+              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]] [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
              [output]
 ```
 
 > Available options may vary depending on the version. To display all available options with their descriptions use
 `knows -h`.
 
-### Options
+### Positional arguments
+
+- `output`: Optional path to save the graph. For CSV format two files will be created: `*_nodes.csv` and `*_edges.csv`.
 
 ### Options
 
-- `-h`, `--help`: Show help message and exit.
+- `-h`, `--help`: Show this help message and exit.
 - `-n NODES`, `--nodes NODES`: Number of nodes in the graph. Selected randomly if not specified.
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
@@ -121,19 +135,17 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
   `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
   Format to output the graph. Default: `graphml`.
-- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]`,  
-  `--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor} ...]`:  
-  Space-separated node properties. Available: firstName, lastName, company, job, phoneNumber, favoriteColor.
-- `-ep [{createDate,meetingCity,strength} ...]`,  
-  `--edge-props [{createDate,meetingCity,strength} ...]`:  
-  Space-separated edge properties. Available: createDate, meetingCity, strength.
-- `-a`, `--all-props`: Use all available node and edge properties.
+-
+`-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,  
+`--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
+Space-separated node properties. Available: firstName, lastName, company, job, phoneNumber, favoriteColor,
+postalAddress, friendCount, preferredContactMethod.
+- `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
+  `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
+  Space-separated edge properties. Available: strength, lastMeetingCity, lastMeetingDate, meetingCount.
+- `-ap`, `--all-props`: Use all available node and edge properties.
 - `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in Docker.  
   If you want to generate an image of the graph, use the `svg` output format and save it to a file.
-
-You may also provide an optional path at the end of the command to save the output directly to a file. For the CSV
-format, two
-files will be created with suffixes `_nodes.csv` and `_edges.csv`.
 
 ### Practical Examples 🌟
 
@@ -187,15 +199,15 @@ files will be created with suffixes `_nodes.csv` and `_edges.csv`.
    ```
 9. Create a graph with custom properties (20 nodes, 10 edges) and show it:
    ```shell
-   knows -n 20 -e 10 --node-props firstName favoriteColor job --edge-props meetingCity
+   knows -n 20 -e 10 --node-props firstName favoriteColor job --edge-props lastMeetingCity
    ```
 10. Create a graph with all possible properties in YARS-PG format and save it to file:
    ```shell
-   knows -a -f yarspg > graph.yarspg
+   knows -ap -f yarspg > graph.yarspg
    # or
-   knows -a -f yarspg > graph.yarspg
+   knows -ap -f yarspg > graph.yarspg
    ```
-11. Generate a reproducible graph in CSV and by setting a seed:
+11. Generate a reproducible graph in CSV by setting a seed:
    ```shell
    knows -n 3 -e 2 -s -f csv 43
    ```

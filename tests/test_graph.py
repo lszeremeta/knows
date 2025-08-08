@@ -1,6 +1,8 @@
+import datetime
+
 import pytest
 
-from knows.graph import Graph
+from knows.graph import Graph, SAME_EDGE_PROPS
 
 
 @pytest.mark.parametrize("num_nodes, num_edges", [(5, 4), (10, 15), (0, 0)])
@@ -48,7 +50,7 @@ def test_graph_custom_properties():
         3,
         1,
         node_props=['firstName', 'favoriteColor', 'job'],
-        edge_props=['createDate', 'meetingCity'],
+        edge_props=['strength', 'lastMeetingCity'],
     )
     graph.generate()
     for _, attributes in graph.graph.nodes(data=True):
@@ -57,9 +59,9 @@ def test_graph_custom_properties():
         assert 'job' in attributes
         assert 'lastName' not in attributes
     for _, _, attributes in graph.graph.edges(data=True):
-        assert 'createDate' in attributes
-        assert 'meetingCity' in attributes
-        assert 'strength' not in attributes
+        assert 'strength' in attributes
+        assert 'lastMeetingCity' in attributes
+        assert 'lastMeetingDate' not in attributes
 
 
 def test_invalid_property_name_raises_error():
@@ -87,3 +89,49 @@ def test_graph_seed_variation():
     graph2.generate()
     assert list(graph1.graph.nodes(data=True)) != list(graph2.graph.nodes(data=True)) or \
            list(graph1.graph.edges(data=True)) != list(graph2.graph.edges(data=True))
+
+
+def test_new_node_and_edge_properties():
+    """Ensure new properties are generated within valid ranges."""
+    graph = Graph(
+        4,
+        3,
+        node_props=['postalAddress', 'friendCount', 'preferredContactMethod'],
+        edge_props=list(SAME_EDGE_PROPS),
+    )
+    graph.generate()
+
+    for _, props in graph.graph.nodes(data=True):
+        assert 'postalAddress' in props and isinstance(props['postalAddress'], str)
+        assert 1 <= props['friendCount'] <= 1000
+        assert props['preferredContactMethod'] in {
+            'inPerson',
+            'email',
+            'postalMail',
+            'phone',
+            'textMessage',
+            'videoCall',
+            'noPreference',
+        }
+
+    for _, _, props in graph.graph.edges(data=True):
+        assert 'lastMeetingCity' in props and isinstance(props['lastMeetingCity'], str)
+        date = datetime.date.fromisoformat(props['lastMeetingDate'])
+        assert datetime.date(1955, 1, 1) <= date <= datetime.date(2025, 6, 28)
+        assert 1 <= props['meetingCount'] <= 10000
+
+
+def test_paired_edge_properties_sync():
+    """Paired edges should share last meeting data."""
+    graph = Graph(
+        2,
+        2,
+        edge_props=list(SAME_EDGE_PROPS),
+        seed=0,
+    )
+    graph.generate()
+
+    props_ab = graph.graph['N1']['N2']
+    props_ba = graph.graph['N2']['N1']
+    for key in SAME_EDGE_PROPS:
+        assert props_ab[key] == props_ba[key]

@@ -1,3 +1,4 @@
+import datetime
 import random
 
 import networkx as nx
@@ -10,13 +11,35 @@ NODE_PROPERTY_GENERATORS: dict[str, callable] = {
     'job': lambda f: f.job(),
     'phoneNumber': lambda f: f.phone_number(),
     'favoriteColor': lambda f: f.color_name(),
+    'postalAddress': lambda f: f.address(),
+    'friendCount': lambda f: f.random_int(min=1, max=1000),
+    'preferredContactMethod': lambda f: f.random_element(
+        (
+            'inPerson',
+            'email',
+            'postalMail',
+            'phone',
+            'textMessage',
+            'videoCall',
+            'noPreference',
+        )
+    ),
 }
 
 EDGE_PROPERTY_GENERATORS: dict[str, callable] = {
-    'createDate': lambda f: f.date(),
-    'meetingCity': lambda f: f.city(),
     'strength': lambda f: f.random_int(min=1, max=100),
+    'lastMeetingCity': lambda f: f.city(),
+    'lastMeetingDate': lambda f: f.date_between(
+        datetime.date(1955, 1, 1), datetime.date(2025, 6, 28)
+    ).isoformat(),
+    'meetingCount': lambda f: f.random_int(min=1, max=10000),
 }
+
+SAME_EDGE_PROPS = frozenset({
+    'lastMeetingCity',
+    'lastMeetingDate',
+    'meetingCount',
+})
 
 NODE_PROPERTIES = list(NODE_PROPERTY_GENERATORS.keys())
 EDGE_PROPERTIES = list(EDGE_PROPERTY_GENERATORS.keys())
@@ -33,7 +56,7 @@ class Graph:
         self.num_nodes = num_nodes
         self.num_edges = num_edges
         self.node_props = node_props or ['firstName', 'lastName']
-        self.edge_props = edge_props or ['createDate']
+        self.edge_props = edge_props or ['strength', 'lastMeetingDate']
         self.random = random.Random(seed)
         self.faker = Faker()
         if seed is not None:
@@ -76,4 +99,9 @@ class Graph:
                 for prop in self.edge_props:
                     generator = EDGE_PROPERTY_GENERATORS[prop]
                     properties[prop] = generator(self.faker)
+                if self.graph.has_edge(v, u):
+                    reverse_props = self.graph[v][u]
+                    for prop in SAME_EDGE_PROPS:
+                        if prop in self.edge_props and prop in reverse_props:
+                            properties[prop] = reverse_props[prop]
                 self.graph.add_edge(u, v, **properties)

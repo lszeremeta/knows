@@ -3,6 +3,7 @@
 import pytest
 
 from knows.command_line_interface import CommandLineInterface
+from knows.graph import NODE_PROPERTIES, SAME_EDGE_PROPS, EDGE_PROPERTIES
 
 
 def test_cli_default_args(monkeypatch):
@@ -21,7 +22,7 @@ def test_cli_default_args(monkeypatch):
     assert cli.args.format == 'graphml'
     assert not cli.args.draw
     assert cli.args.node_props == ['firstName', 'lastName']
-    assert cli.args.edge_props == ['createDate']
+    assert cli.args.edge_props == ['strength', 'lastMeetingDate']
     assert cli.args.seed is None
     assert cli.args.output is None
 
@@ -29,32 +30,76 @@ def test_cli_default_args(monkeypatch):
 @pytest.mark.parametrize(
     "args, expected_nodes, expected_edges, expected_format, expected_draw, node_props, edge_props",
     [
-        (['prog', '-n', '10', '-e', '8'], 10, 8, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog'], None, None, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
+        (['prog', '-n', '10', '-e', '8'], 10, 8, 'graphml', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog'], None, None, 'graphml', False, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
         (['prog', '-n', '10', '-e', '8', '--format', 'yarspg'], 10, 8, 'yarspg', False, ['firstName', 'lastName'],
-         ['createDate']),
-        (['prog', '--format', 'csv'], None, None, 'csv', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'cypher'], None, None, 'cypher', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'json'], None, None, 'json', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'gexf'], None, None, 'gexf', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'gml'], None, None, 'gml', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'svg'], None, None, 'svg', False, ['firstName', 'lastName'], ['createDate']),
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'csv'], None, None, 'csv', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'cypher'], None, None, 'cypher', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'json'], None, None, 'json', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'gexf'], None, None, 'gexf', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'gml'], None, None, 'gml', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'svg'], None, None, 'svg', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
         (['prog', '--format', 'adjacency_list'], None, None, 'adjacency_list', False, ['firstName', 'lastName'],
-         ['createDate']),
+         ['strength', 'lastMeetingDate']),
         (['prog', '--format', 'multiline_adjacency_list'], None, None, 'multiline_adjacency_list', False,
-         ['firstName', 'lastName'], ['createDate']),
-        (['prog', '--format', 'edge_list'], None, None, 'edge_list', False, ['firstName', 'lastName'], ['createDate']),
-        (['prog', '-d'], None, None, 'graphml', True, ['firstName', 'lastName'], ['createDate']),
+         ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
+        (['prog', '--format', 'edge_list'], None, None, 'edge_list', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
+        (['prog', '-d'], None, None, 'graphml', True, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
         (['prog', '--node-props', 'favoriteColor', 'job'], None, None, 'graphml', False, ['favoriteColor', 'job'],
-         ['createDate']),
-        (['prog', '--edge-props', 'meetingCity'], None, None, 'graphml', False, ['firstName', 'lastName'],
-         ['meetingCity']),
-        (['prog', '-np', 'company', 'job'], None, None, 'graphml', False, ['company', 'job'], ['createDate']),
+         ['strength', 'lastMeetingDate']),
+        (['prog', '--edge-props', 'lastMeetingCity'], None, None, 'graphml', False, ['firstName', 'lastName'],
+         ['lastMeetingCity']),
+        (['prog', '-np', 'company', 'job'], None, None, 'graphml', False, ['company', 'job'],
+         ['strength', 'lastMeetingDate']),
         (['prog', '-ep', 'strength'], None, None, 'graphml', False, ['firstName', 'lastName'], ['strength']),
-        (['prog', '--all-props'], None, None, 'graphml', False,
-         ['firstName', 'lastName', 'company', 'job', 'phoneNumber', 'favoriteColor'],
-         ['createDate', 'meetingCity', 'strength']),
-        (['prog', '--seed', '42'], None, None, 'graphml', False, ['firstName', 'lastName'], ['createDate']),
+        (
+                ['prog', '--node-props', 'postalAddress', 'friendCount', 'preferredContactMethod'],
+                None,
+                None,
+                'graphml',
+                False,
+                ['postalAddress', 'friendCount', 'preferredContactMethod'],
+                ['strength', 'lastMeetingDate'],
+        ),
+        (
+                ['prog', '--edge-props', *SAME_EDGE_PROPS],
+                None,
+                None,
+                'graphml',
+                False,
+                ['firstName', 'lastName'],
+                list(SAME_EDGE_PROPS),
+        ),
+        (
+                ['prog', '--all-props'],
+                None,
+                None,
+                'graphml',
+                False,
+                [
+                    'firstName',
+                    'lastName',
+                    'company',
+                    'job',
+                    'phoneNumber',
+                    'favoriteColor',
+                    'postalAddress',
+                    'friendCount',
+                    'preferredContactMethod',
+                ],
+                EDGE_PROPERTIES,
+        ),
+        (['prog', '--seed', '42'], None, None, 'graphml', False, ['firstName', 'lastName'],
+         ['strength', 'lastMeetingDate']),
     ],
 )
 def test_cli_various_args(monkeypatch, args, expected_nodes, expected_edges, expected_format, expected_draw, node_props,
@@ -105,3 +150,11 @@ def test_cli_seed_short_option(monkeypatch):
     monkeypatch.setattr('sys.argv', ['prog', '-s', '123'])
     cli = CommandLineInterface()
     assert cli.args.seed == 123
+
+
+def test_cli_all_props_short_option(monkeypatch):
+    """Ensure short all-props option is parsed."""
+    monkeypatch.setattr('sys.argv', ['prog', '-ap'])
+    cli = CommandLineInterface()
+    assert cli.args.node_props == NODE_PROPERTIES
+    assert cli.args.edge_props == EDGE_PROPERTIES
