@@ -60,8 +60,8 @@ class CommandLineInterface:
             "-f",
             "--format",
             choices=[
-                'graphml',
                 'yarspg',
+                'graphml',
                 'csv',
                 'cypher',
                 'gexf',
@@ -75,8 +75,8 @@ class CommandLineInterface:
                 'edge_list',
                 'json',
             ],
-            default='graphml',
-            help="Format to output the graph. Default: graphml. The svg, png, jpg and pdf formats are for simple graph visualization.",
+            default='yarspg',
+            help="Format to output the graph. Default: yarspg. The svg, png, jpg and pdf formats are for simple graph visualization.",
         )
         parser.add_argument(
             "-np",

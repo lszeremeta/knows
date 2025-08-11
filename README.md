@@ -4,7 +4,7 @@
 
 Knows is a powerful and user-friendly tool for benchmarking property graphs. These graphs are crucial in many fields.
 Knows supports
-multiple output formats and visualization capabilities, making it a go-to tool for researchers, educators and data
+multiple output formats and basic visualization capabilities, making it a go-to tool for researchers, educators and data
 enthusiasts.
 
 ## Key Features 🚀
@@ -133,7 +133,7 @@ The `-d`/`--draw` option requires Tkinter.
 ### Basic Usage
 
 ```shell
-knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]]
              [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
              [output]
@@ -153,8 +153,8 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
-- `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
-  Format to output the graph. Default: `graphml`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
+- `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
+  Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
   visualization.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
@@ -169,15 +169,15 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 
 ### Practical Examples 🌟
 
-1. Create a random graph in GraphML format and show it:
+1. Create a random graph in [YARS-PG 5.0 format](https://github.com/lszeremeta/yarspg) and show it:
    ```shell
    knows
    ```
-2. Create a 100-node, 70-edge graph in [YARS-PG format](https://github.com/lszeremeta/yarspg):
+2. Create a 100-node, 70-edge graph in GraphML format:
    ```shell
-   knows -n 100 -e 70 -f yarspg > graph.yarspg
+   knows -n 100 -e 70 -f graphml > graph.graphml
    # or
-   knows -n 100 -e 70 -f yarspg graph.yarspg
+   knows -n 100 -e 70 -f graphml graph.graphml
    ```
 3. Create a random graph in CSV format and save to files (nodes are written to standard output, edges to standard
    error):
@@ -193,11 +193,11 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    # or
    knows -n 50 -e 20 -f cypher graph.cypher
    ```
-5. Create a 100-node, 50-edge graph in GraphML format:
+5. Create a 100-node, 50-edge graph in YARS-PG format:
    ```shell
-   knows -n 100 -e 50 > graph.graphml
+   knows -n 100 -e 50 > graph.yarspg
    # or
-   knows -n 100 -e 50 graph.graphml
+   knows -n 100 -e 50 graph.yarspg
    ```
 6. Create, save, and visualize a 100-node, 50-edge graph in SVG:
    ```shell
@@ -229,13 +229,13 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    ```
 11. Create a graph with all possible properties in YARS-PG format and save it to file:
    ```shell
-   knows -ap -f yarspg > graph.yarspg
+   knows -ap > graph.yarspg
    # or
-   knows -ap -f yarspg > graph.yarspg
+   knows -ap graph.yarspg
    ```
 12. Generate a reproducible graph in CSV by setting a seed:
    ```shell
-   knows -n 3 -e 2 -s -f csv 43
+   knows -n 3 -e 2 -s 43 -f csv
    ```
 
 Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
@@ -244,7 +244,7 @@ remain unchanged.
 13. Generate the same graph as above but in YARS-PG format:
 
    ```shell
-   knows -n 3 -e 2 -s -f yarspg 43
+   knows -n 3 -e 2 -s 43
    ```
 
 ## Contribute to Knows 👥

@@ -19,7 +19,7 @@ def test_cli_default_args(monkeypatch):
     cli = CommandLineInterface()
     assert cli.args.nodes == 5
     assert cli.args.edges == 4
-    assert cli.args.format == 'graphml'
+    assert cli.args.format == 'yarspg'
     assert not cli.args.draw
     assert cli.args.node_props == ['firstName', 'lastName']
     assert cli.args.edge_props == ['strength', 'lastMeetingDate']
@@ -30,9 +30,9 @@ def test_cli_default_args(monkeypatch):
 @pytest.mark.parametrize(
     "args, expected_nodes, expected_edges, expected_format, expected_draw, node_props, edge_props",
     [
-        (['prog', '-n', '10', '-e', '8'], 10, 8, 'graphml', False, ['firstName', 'lastName'],
+        (['prog', '-n', '10', '-e', '8'], 10, 8, 'yarspg', False, ['firstName', 'lastName'],
          ['strength', 'lastMeetingDate']),
-        (['prog'], None, None, 'graphml', False, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
+        (['prog'], None, None, 'yarspg', False, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
         (['prog', '-n', '10', '-e', '8', '--format', 'yarspg'], 10, 8, 'yarspg', False, ['firstName', 'lastName'],
          ['strength', 'lastMeetingDate']),
         (['prog', '--format', 'csv'], None, None, 'csv', False, ['firstName', 'lastName'],
@@ -59,19 +59,19 @@ def test_cli_default_args(monkeypatch):
          ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
         (['prog', '--format', 'edge_list'], None, None, 'edge_list', False, ['firstName', 'lastName'],
          ['strength', 'lastMeetingDate']),
-        (['prog', '-d'], None, None, 'graphml', True, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
-        (['prog', '--node-props', 'favoriteColor', 'job'], None, None, 'graphml', False, ['favoriteColor', 'job'],
+        (['prog', '-d'], None, None, 'yarspg', True, ['firstName', 'lastName'], ['strength', 'lastMeetingDate']),
+        (['prog', '--node-props', 'favoriteColor', 'job'], None, None, 'yarspg', False, ['favoriteColor', 'job'],
          ['strength', 'lastMeetingDate']),
-        (['prog', '--edge-props', 'lastMeetingCity'], None, None, 'graphml', False, ['firstName', 'lastName'],
+        (['prog', '--edge-props', 'lastMeetingCity'], None, None, 'yarspg', False, ['firstName', 'lastName'],
          ['lastMeetingCity']),
-        (['prog', '-np', 'company', 'job'], None, None, 'graphml', False, ['company', 'job'],
+        (['prog', '-np', 'company', 'job'], None, None, 'yarspg', False, ['company', 'job'],
          ['strength', 'lastMeetingDate']),
-        (['prog', '-ep', 'strength'], None, None, 'graphml', False, ['firstName', 'lastName'], ['strength']),
+        (['prog', '-ep', 'strength'], None, None, 'yarspg', False, ['firstName', 'lastName'], ['strength']),
         (
                 ['prog', '--node-props', 'postalAddress', 'friendCount', 'preferredContactMethod'],
                 None,
                 None,
-                'graphml',
+                'yarspg',
                 False,
                 ['postalAddress', 'friendCount', 'preferredContactMethod'],
                 ['strength', 'lastMeetingDate'],
@@ -80,7 +80,7 @@ def test_cli_default_args(monkeypatch):
                 ['prog', '--edge-props', *SAME_EDGE_PROPS],
                 None,
                 None,
-                'graphml',
+                'yarspg',
                 False,
                 ['firstName', 'lastName'],
                 list(SAME_EDGE_PROPS),
@@ -89,7 +89,7 @@ def test_cli_default_args(monkeypatch):
                 ['prog', '--all-props'],
                 None,
                 None,
-                'graphml',
+                'yarspg',
                 False,
                 [
                     'firstName',
@@ -104,7 +104,7 @@ def test_cli_default_args(monkeypatch):
                 ],
                 EDGE_PROPERTIES,
         ),
-        (['prog', '--seed', '42'], None, None, 'graphml', False, ['firstName', 'lastName'],
+        (['prog', '--seed', '42'], None, None, 'yarspg', False, ['firstName', 'lastName'],
          ['strength', 'lastMeetingDate']),
     ],
 )
@@ -145,7 +145,7 @@ def test_cli_output_file(monkeypatch, tmp_path):
         monkeypatch: A pytest fixture for monkey-patching.
         tmp_path (pathlib.Path): Temporary directory for output files.
     """
-    output_file = tmp_path / "graph.graphml"
+    output_file = tmp_path / "graph.yarspg"
     monkeypatch.setattr('sys.argv', ['prog', str(output_file)])
     cli = CommandLineInterface()
     assert cli.args.output == str(output_file)
