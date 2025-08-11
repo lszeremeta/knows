@@ -10,10 +10,9 @@ enthusiasts.
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
-- **Diverse Output Formats**: Export graphs in formats like GraphML, YARS-PG, CSV, Cypher, GEXF, GML, SVG, JSON, and
-  others.
+- **Diverse Output Formats**: Export graphs in formats like GraphML, [YARS-PG 5.0](https://github.com/lszeremeta/yarspg), CSV, Cypher, GEXF, GML, JSON, and others.
 - **Flexible Output Options**: Display results in the console, redirect them, or save them directly to a file.
-- **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG format.
+- **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG, PNG, JPG, or PDF format.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
@@ -127,15 +126,16 @@ The `-d`/`--draw` option requires Tkinter.
   See [Installing Tkinter on macOS](https://www.pythonguis.com/installation/install-tkinter-mac/) for details.
 
 - **Windows**:
-  On Windows Tkinter should be installed by default with Python. No additional steps required.
+  On Windows, Tkinter should be installed by default with Python. No additional steps required.
 
 ## Usage 💡
 
 ### Basic Usage
 
 ```shell
-knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}]
-              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]] [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
+knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+             [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]]
+             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
              [output]
 ```
 
@@ -153,12 +153,10 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
-- `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
-  `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
-  Format to output the graph. Default: `graphml`.
--
-`-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,
-`--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
+- `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
+  Format to output the graph. Default: `graphml`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
+  visualization.
+- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
 `postalAddress`, `friendCount`, `preferredContactMethod`.
 - `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
@@ -166,8 +164,8 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`.
 - `-ap`, `--all-props`: Use all available node and edge properties.
 - `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
-  may not work in Docker. If you want to generate an image of the graph, use the `svg` output format and save it to a
-  file.
+  may not work in Docker. If you want to generate an image of the graph, use the `svg`, `png`, `jpg`, or `pdf` output
+  format and save it to a file.
 
 ### Practical Examples 🌟
 
@@ -207,29 +205,35 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    # or
    knows -n 100 -e 50 -f svg -d graph.svg
    ```
-7. Create, save a 100-node, 50-edge graph in SVG:
+7. Create, save a 70-node, 50-edge graph in SVG:
    ```shell
-   knows -n 100 -e 50 -f svg > graph.svg
+   knows -n 70 -e 50 -f svg > graph.svg
    # or
-   knows -n 100 -e 50 -f svg graph.svg
+   knows -n 70 -e 50 -f svg graph.svg
    ```
-8. Create a graph in JSON format:
+8. Create, save a 10-node, 5-edge graph in PNG:
+   ```shell
+   knows -n 10 -e 5 -f png > graph.png
+   # or
+   knows -n 10 -e 5 -f png graph.png
+   ```
+9. Create a graph in JSON format:
    ```shell
    knows -f json > graph.json
    # or
    knows -f json graph.json
    ```
-9. Create a graph with custom properties (20 nodes, 10 edges) and show it:
+10. Create a graph with custom properties (20 nodes, 10 edges) and show it:
    ```shell
    knows -n 20 -e 10 --node-props firstName favoriteColor job --edge-props lastMeetingCity
    ```
-10. Create a graph with all possible properties in YARS-PG format and save it to file:
+11. Create a graph with all possible properties in YARS-PG format and save it to file:
    ```shell
    knows -ap -f yarspg > graph.yarspg
    # or
    knows -ap -f yarspg > graph.yarspg
    ```
-11. Generate a reproducible graph in CSV by setting a seed:
+12. Generate a reproducible graph in CSV by setting a seed:
    ```shell
    knows -n 3 -e 2 -s -f csv 43
    ```
@@ -237,7 +241,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
 remain unchanged.
 
-12. Generate the same graph as above but in YARS-PG format:
+13. Generate the same graph as above but in YARS-PG format:
 
    ```shell
    knows -n 3 -e 2 -s -f yarspg 43

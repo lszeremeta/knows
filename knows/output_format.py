@@ -39,6 +39,9 @@ class OutputFormat:
             'gexf': self._to_gexf,
             'gml': self._to_gml,
             'svg': self._to_svg,
+            'png': self._to_png,
+            'jpg': self._to_jpg,
+            'pdf': self._to_pdf,
             'adjacency_list': self._to_adjacency_list,
             'multiline_adjacency_list': self._to_multiline_adjacency_list,
             'edge_list': self._to_edge_list,
@@ -157,8 +160,35 @@ class OutputFormat:
         """
         drawer = GraphDrawer(self.graph.graph)
         with io.BytesIO() as buffer:
-            drawer._draw_to_buffer(buffer)
+            drawer._draw_to_buffer(buffer, 'svg')
             return buffer.getvalue().decode('utf-8')
+
+    def _to_png(self) -> bytes:
+        """Converts the graph to PNG format.
+
+        Returns:
+            bytes: The graph image in PNG format.
+        """
+        drawer = GraphDrawer(self.graph.graph)
+        return drawer.to_png()
+
+    def _to_jpg(self) -> bytes:
+        """Converts the graph to JPG format.
+
+        Returns:
+            bytes: The graph image in JPG format.
+        """
+        drawer = GraphDrawer(self.graph.graph)
+        return drawer.to_jpg()
+
+    def _to_pdf(self) -> bytes:
+        """Converts the graph to PDF format.
+
+        Returns:
+            bytes: The graph in PDF format.
+        """
+        drawer = GraphDrawer(self.graph.graph)
+        return drawer.to_pdf()
 
     def _to_gexf(self) -> str:
         """Converts the graph to GEXF format.

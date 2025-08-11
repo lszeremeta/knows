@@ -55,13 +55,43 @@ class GraphDrawer:
             str: The graph representation in SVG format.
         """
         with io.BytesIO() as buffer:
-            self._draw_to_buffer(buffer)
+            self._draw_to_buffer(buffer, 'svg')
             return buffer.getvalue().decode('utf-8')
 
-    def _draw_to_buffer(self, buffer: io.BytesIO) -> None:
-        """Helper method for drawing the graph into a buffer for SVG export."""
+    def to_png(self) -> bytes:
+        """Exports the graph to PNG format.
+
+        Returns:
+            bytes: The graph image in PNG format.
+        """
+        with io.BytesIO() as buffer:
+            self._draw_to_buffer(buffer, 'png')
+            return buffer.getvalue()
+
+    def to_jpg(self) -> bytes:
+        """Exports the graph to JPG format.
+
+        Returns:
+            bytes: The graph image in JPG format.
+        """
+        with io.BytesIO() as buffer:
+            self._draw_to_buffer(buffer, 'jpg')
+            return buffer.getvalue()
+
+    def to_pdf(self) -> bytes:
+        """Exports the graph to PDF format.
+
+        Returns:
+            bytes: The graph in PDF format.
+        """
+        with io.BytesIO() as buffer:
+            self._draw_to_buffer(buffer, 'pdf')
+            return buffer.getvalue()
+
+    def _draw_to_buffer(self, buffer: io.BytesIO, fmt: str) -> None:
+        """Helper method for drawing the graph into a buffer for various formats."""
         plt.figure()
         self.draw()
-        plt.savefig(buffer, format='svg', bbox_inches='tight')
+        plt.savefig(buffer, format=fmt, bbox_inches='tight')
         buffer.seek(0)
         plt.close()

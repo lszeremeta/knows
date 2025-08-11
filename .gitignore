@@ -7,6 +7,12 @@
 *.gexf
 *.gml
 *.json
+*.png
+!logo/*.png
+*.jpg
+*.jpeg
+*.pdf
+*.cypher
 
 # zip files
 *.zip

@@ -198,3 +198,33 @@ def test_output_format_svg():
     svg_output = output_format.to_format('svg')
     assert '<svg' in svg_output
     assert '</svg>' in svg_output
+
+
+def test_output_format_png():
+    """Tests if the graph is converted to PNG format."""
+    graph = Graph(2, 1)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    png_output = output_format.to_format('png')
+    assert isinstance(png_output, bytes)
+    assert png_output.startswith(b'\x89PNG')
+
+
+def test_output_format_jpg():
+    """Tests if the graph is converted to JPG format."""
+    graph = Graph(2, 1)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    jpg_output = output_format.to_format('jpg')
+    assert isinstance(jpg_output, bytes)
+    assert jpg_output.startswith(b'\xff\xd8')
+
+
+def test_output_format_pdf():
+    """Tests if the graph is converted to PDF format."""
+    graph = Graph(2, 1)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    pdf_output = output_format.to_format('pdf')
+    assert isinstance(pdf_output, bytes)
+    assert pdf_output.startswith(b'%PDF')

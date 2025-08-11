@@ -67,13 +67,16 @@ class CommandLineInterface:
                 'gexf',
                 'gml',
                 'svg',
+                'png',
+                'jpg',
+                'pdf',
                 'adjacency_list',
                 'multiline_adjacency_list',
                 'edge_list',
                 'json',
             ],
             default='graphml',
-            help="Format to output the graph. Default: graphml.",
+            help="Format to output the graph. Default: graphml. The svg, png, jpg and pdf formats are for simple graph visualization.",
         )
         parser.add_argument(
             "-np",

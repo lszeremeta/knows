@@ -55,6 +55,39 @@ def test_svg_output_contains_svg_tag():
     assert '<svg' in svg_output
 
 
+def test_to_png_returns_bytes():
+    """Ensure PNG export returns bytes with PNG signature."""
+    graph = nx.DiGraph()
+    graph.add_node(1)
+    graph.add_edge(1, 2)
+    drawer = GraphDrawer(graph)
+    png_output = drawer.to_png()
+    assert isinstance(png_output, bytes)
+    assert png_output.startswith(b'\x89PNG')
+
+
+def test_to_jpg_returns_bytes():
+    """Ensure JPG export returns bytes with JPEG signature."""
+    graph = nx.DiGraph()
+    graph.add_node(1)
+    graph.add_edge(1, 2)
+    drawer = GraphDrawer(graph)
+    jpg_output = drawer.to_jpg()
+    assert isinstance(jpg_output, bytes)
+    assert jpg_output.startswith(b'\xff\xd8')
+
+
+def test_to_pdf_returns_bytes():
+    """Ensure PDF export returns bytes with PDF signature."""
+    graph = nx.DiGraph()
+    graph.add_node(1)
+    graph.add_edge(1, 2)
+    drawer = GraphDrawer(graph)
+    pdf_output = drawer.to_pdf()
+    assert isinstance(pdf_output, bytes)
+    assert pdf_output.startswith(b'%PDF')
+
+
 def test_graph_properties_unchanged_after_drawing():
     """
     Tests whether the properties of the graph remain unchanged after drawing.

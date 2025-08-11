@@ -23,6 +23,7 @@ def main():
 
         output = OutputFormat(graph)
         formatted_output = output.to_format(cli.args.format)
+        binary_formats = {'png', 'jpg', 'pdf'}
         if cli.args.output:
             output_path = Path(cli.args.output)
             if cli.args.format == 'csv':
@@ -32,11 +33,15 @@ def main():
                 edges_path = base.with_name(base.name + '_edges').with_suffix('.csv')
                 nodes_path.write_text(nodes_csv, encoding='utf-8')
                 edges_path.write_text(edges_csv, encoding='utf-8')
+            elif cli.args.format in binary_formats:
+                output_path.write_bytes(formatted_output)
             else:
                 output_path.write_text(formatted_output, encoding='utf-8')
         else:
             if cli.args.format == 'svg':
                 sys.stdout.buffer.write(formatted_output.encode('utf-8'))
+            elif cli.args.format in binary_formats:
+                sys.stdout.buffer.write(formatted_output)
             elif cli.args.format == 'csv':
                 nodes_csv, edges_csv = formatted_output
 

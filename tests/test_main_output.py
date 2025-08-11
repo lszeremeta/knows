@@ -38,6 +38,24 @@ def test_main_writes_single_file_formats(tmp_path, monkeypatch, fmt, ext, marker
     assert marker in content
 
 
+@pytest.mark.parametrize(
+    "fmt, ext, signature",
+    [
+        ("png", ".png", b"\x89PNG"),
+        ("jpg", ".jpg", b"\xff\xd8"),
+        ("pdf", ".pdf", b"%PDF"),
+    ],
+)
+def test_main_writes_binary_file_formats(tmp_path, monkeypatch, fmt, ext, signature):
+    """Ensure `main` writes binary files for image/PDF formats."""
+    output = tmp_path / f"graph{ext}"
+    monkeypatch.setattr('sys.argv', ['prog', '-n', '3', '-e', '2', '-f', fmt, str(output)])
+    main()
+    assert output.exists()
+    content = output.read_bytes()
+    assert content.startswith(signature)
+
+
 def test_main_writes_csv_files(tmp_path, monkeypatch):
     """Ensure `main` writes CSV nodes and edges files when CSV format is chosen.
 
