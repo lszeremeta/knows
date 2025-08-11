@@ -173,6 +173,8 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 1. Create a random graph in [YARS-PG 5.0 format](https://github.com/lszeremeta/yarspg) and show it:
    ```shell
    knows
+   # or
+   docker run --rm lszeremeta/knows
    ```
 2. Create a 100-node, 70-edge graph in GraphML format:
    ```shell
