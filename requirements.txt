@@ -1,3 +1,0 @@
-networkx>=3.2,<3.6
-Faker>=36.0.0
-matplotlib>=3.8.4

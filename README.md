@@ -100,7 +100,7 @@ You can install knows via PyPI, Docker or run it from the source code.
 
 2. **Install Requirements**:
    ```shell
-   pip install -r requirements.txt
+   pip install .[draw]
    ```
 
 3. **Execute Knows**:

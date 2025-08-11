@@ -1,0 +1,103 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knows"
+version = "1.0.0"
+description = "Powerful and user-friendly property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Łukasz Szeremeta", email = "l.szeremeta.dev+knows@gmail.com" }]
+
+dependencies = [
+    "networkx>=3.2.0,<3.6.0",
+    "Faker>=36.0.0",
+]
+
+keywords = [
+    "knows",
+    "benchmark",
+    "yarspg",
+    "graphs",
+    "mathematics",
+    "CLI",
+    "GraphML",
+    "YARS-PG",
+    "property graph",
+    "graph",
+    "graph database",
+    "graph data",
+    "Neo4j",
+    "NetworkX",
+    "Faker",
+    "graph analysis",
+    "benchmarking",
+    "graph visualization",
+    "data science",
+    "graph algorithms",
+    "network analysis",
+    "graph tool",
+    "data analytics",
+    "educational tool",
+    "research tool",
+    "graph generation",
+    "python graph",
+    "docker graph tool",
+    "command line interface",
+    "CLI tool",
+    "json",
+    "svg",
+    "data visualization",
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Education",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: MacOS",
+    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Benchmark",
+    "Topic :: Database",
+    "Topic :: File Formats",
+    "Topic :: Internet",
+    "Topic :: Multimedia :: Graphics :: Presentation",
+    "Topic :: Multimedia :: Graphics :: Viewers",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+[project.optional-dependencies]
+draw = ["matplotlib>=3.8.4"]
+test = ["matplotlib>=3.8.4", "pytest>=8.0.0", "flake8>=7.0.0"]
+dev = ["matplotlib>=3.8.4", "pytest>=8.0.0", "flake8>=7.0.0"]
+
+[project.urls]
+homepage = "https://github.com/lszeremeta/knows"
+repository = "https://github.com/lszeremeta/knows"
+"Bug Tracker" = "https://github.com/lszeremeta/knows/issues"
+"Source Code" = "https://github.com/lszeremeta/knows"
+
+[project.scripts]
+knows = "knows.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["knows"]
