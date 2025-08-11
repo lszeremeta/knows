@@ -10,6 +10,13 @@ try:
 except ImportError:
     MATPLOTLIB_AVAILABLE = False
 
+try:
+    import tkinter
+
+    TKINTER_AVAILABLE = True
+except Exception:
+    TKINTER_AVAILABLE = False
+
 
 class GraphDrawer:
     def __init__(self, graph: nx.Graph):
@@ -29,6 +36,10 @@ class GraphDrawer:
 
         Sets up the graph to be drawn and then displays it.
         """
+        if not TKINTER_AVAILABLE:
+            raise RuntimeError(
+                "Tkinter is required for displaying graphs. Install it with 'sudo apt install python3-tk' on Ubuntu or 'brew install python-tk' on macOS."
+            )
         self.draw()
         plt.show()
 

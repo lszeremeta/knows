@@ -108,6 +108,27 @@ You can install knows via PyPI, Docker or run it from the source code.
    python -m knows [options]
    ```
 
+### Install Tkinter for Graph Visualization
+
+The `-d`/`--draw` option requires Tkinter.
+
+- **Ubuntu**:
+  ```shell
+  sudo apt update
+  sudo apt install python3-tk
+  ```
+  See [Installing Tkinter on Ubuntu](https://www.pythonguis.com/installation/install-tkinter-linux/) for details.
+
+- **macOS (Homebrew)**:
+  ```shell
+  brew install python3
+  brew install python-tk
+  ```
+  See [Installing Tkinter on macOS](https://www.pythonguis.com/installation/install-tkinter-mac/) for details.
+
+- **Windows**:
+  On Windows Tkinter should be installed by default with Python. No additional steps required.
+
 ## Usage 💡
 
 ### Basic Usage
@@ -135,7 +156,8 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {graphml,yarspg,csv,cypher,gexf,g
 - `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`,  
   `--format {graphml,yarspg,csv,cypher,gexf,gml,svg,adjacency_list,multiline_adjacency_list,edge_list,json}`:  
   Format to output the graph. Default: `graphml`.
-- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,  
+-
+`-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`,
 `--node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
 `postalAddress`, `friendCount`, `preferredContactMethod`.
@@ -143,8 +165,9 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`.
 - `-ap`, `--all-props`: Use all available node and edge properties.
-- `-d`, `--draw`: Generate an image of the graph (default is no image). This option may not work in Docker.  
-  If you want to generate an image of the graph, use the `svg` output format and save it to a file.
+- `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
+  may not work in Docker. If you want to generate an image of the graph, use the `svg` output format and save it to a
+  file.
 
 ### Practical Examples 🌟
 

@@ -106,7 +106,7 @@ class CommandLineInterface:
             help="Use all available node and edge properties.",
         )
         parser.add_argument("-d", "--draw", action="store_true",
-                            help="Generate an image of the graph (default is no image). This option may not work in the Docker. If you want to generate an image of the graph, use the svg output format and save it to a file.")
+                            help="Show simple image of the graph (default is no image). Requires Tkinter. This option may not work in the Docker. If you want to generate an image of the graph, use the svg output format and save it to a file.")
         parser.add_argument(
             "output",
             nargs="?",
