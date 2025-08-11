@@ -108,6 +108,7 @@ def test_graph_properties_unchanged_after_drawing():
     assert num_edges_before == num_edges_after
 
 
+@patch('knows.graph_drawer.TKINTER_AVAILABLE', True)
 @patch('matplotlib.pyplot.show')
 def test_configure_and_draw_calls_show(mock_show):
     """
