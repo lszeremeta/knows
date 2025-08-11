@@ -10,7 +10,8 @@ enthusiasts.
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
-- **Diverse Output Formats**: Export graphs in formats like GraphML, [YARS-PG 5.0](https://github.com/lszeremeta/yarspg), CSV, Cypher, GEXF, GML, JSON, and others.
+- **Diverse Output Formats**: Export graphs in formats like
+  GraphML, [YARS-PG 5.0](https://github.com/lszeremeta/yarspg), CSV, Cypher, GEXF, GML, JSON, and others.
 - **Flexible Output Options**: Display results in the console, redirect them, or save them directly to a file.
 - **Integrated Graph Visualization**: Conveniently visualize your graphs in SVG, PNG, JPG, or PDF format.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
@@ -154,8 +155,8 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {yarspg,graphml,csv,cypher,gexf,g
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
 - `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
-  Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
-  visualization.
+Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
+visualization.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
 `postalAddress`, `friendCount`, `preferredContactMethod`.
@@ -178,6 +179,10 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    knows -n 100 -e 70 -f graphml > graph.graphml
    # or
    knows -n 100 -e 70 -f graphml graph.graphml
+   # or
+   docker run --rm lszeremeta/knows -n 100 -e 70 -f graphml > graph.graphml
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 100 -e 70 -f graphml /data/graph.graphml
    ```
 3. Create a random graph in CSV format and save to files (nodes are written to standard output, edges to standard
    error):
@@ -185,6 +190,10 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    knows -f csv > nodes.csv 2> edges.csv
    # or
    knows -f csv graph.csv
+   # or
+   docker run --rm lszeremeta/knows -f csv > nodes.csv 2> edges.csv
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -f csv /data/graph.csv
    ```
    The latter command creates `graph_nodes.csv` and `graph_edges.csv`.
 4. Create a 50-node, 20-edge graph in Cypher format:
