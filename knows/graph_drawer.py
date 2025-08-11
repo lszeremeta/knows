@@ -49,7 +49,7 @@ class GraphDrawer:
 
     def _draw_to_buffer(self, buffer: io.BytesIO) -> None:
         """Helper method for drawing the graph into a buffer for SVG export."""
-        plt.figure(figsize=(10, 8))
+        plt.figure()
         self.draw()
         plt.savefig(buffer, format='svg', bbox_inches='tight')
         buffer.seek(0)
