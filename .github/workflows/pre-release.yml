@@ -61,6 +61,10 @@ jobs:
         uses: softprops/turnstyle@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete latest tag
+        run: gh release delete latest --cleanup-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create pre-release
         uses: softprops/action-gh-release@v2
         with:
