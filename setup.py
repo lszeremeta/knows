@@ -13,7 +13,7 @@ setuptools.setup(
     version="1.0.0",
     author="Łukasz Szeremeta",
     author_email="l.szeremeta.dev+knows@gmail.com",
-    install_requires=["networkx>=3.2.0", "Faker>=36.0.0"],
+    install_requires=["networkx>=3.4.0,<3.6", "Faker>=36.0.0"],
     extras_require={"draw": ["matplotlib>=3.8.4"]},
     tests_require=["pytest>=7.0.0"],
     license="MIT License",
