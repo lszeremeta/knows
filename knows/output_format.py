@@ -239,6 +239,7 @@ class OutputFormat:
         """
         G = self.graph.graph
 
+        # TODO: Remove this workaround when NetworkX 3.4+ is required (Python 3.10+)
         # Feature-detect: if 'edges' is a parameter of node_link_data (NX >= 3.4)
         if "edges" in inspect.signature(nx.node_link_data).parameters:
             data = nx.node_link_data(G, edges="edges")
