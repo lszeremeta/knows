@@ -13,7 +13,7 @@ requires-python = ">=3.9"
 authors = [{ name = "Łukasz Szeremeta", email = "l.szeremeta.dev+knows@gmail.com" }]
 
 dependencies = [
-    "networkx>=3.2.0,<3.6.0",
+    "networkx>=3.2.0",
     "Faker>=36.0.0",
 ]
 

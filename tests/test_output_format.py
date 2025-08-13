@@ -101,9 +101,9 @@ def test_output_format_json():
     json_output = output_format.to_format('json')
     json_data = json.loads(json_output)
     assert 'nodes' in json_data
-    assert 'links' in json_data
+    assert 'edges' in json_data
     assert len(json_data['nodes']) == 2
-    assert len(json_data['links']) == 1
+    assert len(json_data['edges']) == 1
     assert 'N1' in json_output
     assert 'N2' in json_output
     assert 'N3' not in json_output  # Only 2 nodes in this test case
