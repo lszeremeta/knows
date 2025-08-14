@@ -236,7 +236,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    ```
 10. Create a graph with custom properties (20 nodes, 10 edges) and show it:
    ```shell
-   knows -n 20 -e 10 --node-props firstName favoriteColor job --edge-props lastMeetingCity
+   knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
    ```
 11. Create a graph with all possible properties in YARS-PG format and save it to file:
    ```shell
