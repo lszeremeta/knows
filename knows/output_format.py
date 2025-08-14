@@ -73,14 +73,14 @@ class OutputFormat:
         """Formats a node in YARS-PG format.
 
         Args:
-            node (tuple): A tuple containing the node ID and attributes.
+            node (tuple): A tuple containing the node ID and properties.
 
         Returns:
             str: The node in YARS-PG format.
         """
-        node_id, attributes = node
-        label = attributes.get('label', 'label')
-        prop_list = ', '.join([f'"{key}": "{value}"' for key, value in attributes.items() if key != 'label'])
+        node_id, properties = node
+        label = properties.get('label', 'label')
+        prop_list = ', '.join([f'"{key}": "{value}"' for key, value in properties.items() if key != 'label'])
         return f"({node_id} {{\"{label}\"}}[{prop_list}])"
 
     @staticmethod
@@ -88,14 +88,14 @@ class OutputFormat:
         """Formats an edge in YARS-PG format.
 
         Args:
-            edge (tuple): A tuple containing the source node, target node, and attributes.
+            edge (tuple): A tuple containing the source node, target node, and properties.
 
         Returns:
             str: The edge in YARS-PG format.
         """
-        u, v, attributes = edge
-        label = attributes.get('label', 'label')
-        prop_list = ', '.join([f'"{key}": "{value}"' for key, value in attributes.items() if key != 'label'])
+        u, v, properties = edge
+        label = properties.get('label', 'label')
+        prop_list = ', '.join([f'"{key}": "{value}"' for key, value in properties.items() if key != 'label'])
         return f"({u})-({{\"{label}\"}}[{prop_list}])->({v})"
 
     def _to_csv(self) -> tuple[str, str]:

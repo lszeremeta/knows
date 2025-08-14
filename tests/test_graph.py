@@ -30,18 +30,18 @@ def test_graph_generation_with_various_sizes(num_nodes: int, num_edges: int):
             graph.generate()
 
 
-def test_graph_node_attributes_are_correctly_set():
+def test_graph_node_properties_are_correctly_set():
     """
-    Test if the node attributes are correctly set in the graph.
+    Test if the node properties are correctly set in the graph.
 
-    Ensures that each node in the graph has the expected attributes: 'firstName', 'lastName', and 'label'.
+    Ensures that each node in the graph has the expected properties: 'firstName', 'lastName', and 'label'.
     """
     graph = Graph(3, 2)
     graph.generate()
-    for _, attributes in graph.graph.nodes(data=True):
-        assert 'firstName' in attributes
-        assert 'lastName' in attributes
-        assert attributes['label'] == 'Person'
+    for _, properties in graph.graph.nodes(data=True):
+        assert 'firstName' in properties
+        assert 'lastName' in properties
+        assert properties['label'] == 'Person'
 
 
 def test_graph_custom_properties():
@@ -53,15 +53,15 @@ def test_graph_custom_properties():
         edge_props=['strength', 'lastMeetingCity'],
     )
     graph.generate()
-    for _, attributes in graph.graph.nodes(data=True):
-        assert 'firstName' in attributes
-        assert 'favoriteColor' in attributes
-        assert 'job' in attributes
-        assert 'lastName' not in attributes
-    for _, _, attributes in graph.graph.edges(data=True):
-        assert 'strength' in attributes
-        assert 'lastMeetingCity' in attributes
-        assert 'lastMeetingDate' not in attributes
+    for _, properties in graph.graph.nodes(data=True):
+        assert 'firstName' in properties
+        assert 'favoriteColor' in properties
+        assert 'job' in properties
+        assert 'lastName' not in properties
+    for _, _, properties in graph.graph.edges(data=True):
+        assert 'strength' in properties
+        assert 'lastMeetingCity' in properties
+        assert 'lastMeetingDate' not in properties
 
 
 def test_invalid_property_name_raises_error():
