@@ -41,6 +41,13 @@ class GraphDrawer:
                 "Tkinter is required for displaying graphs. Install it with 'sudo apt install python3-tk' on Ubuntu or 'brew install python-tk' on macOS."
             )
         self.draw()
+
+        try:
+            # Set the window title if possible
+            plt.gcf().canvas.manager.set_window_title("Graph Visualization - Knows")
+        except Exception:
+            pass
+        
         plt.show()
 
     def draw(self) -> None:
