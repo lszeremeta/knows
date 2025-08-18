@@ -47,7 +47,7 @@ class GraphDrawer:
             plt.gcf().canvas.manager.set_window_title("Graph Visualization - Knows")
         except Exception:
             pass
-        
+
         plt.show()
 
     def draw(self) -> None:
