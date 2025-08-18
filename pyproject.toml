@@ -91,10 +91,10 @@ test = ["matplotlib>=3.8.4", "pytest>=8.0.0", "flake8>=7.0.0"]
 dev = ["matplotlib>=3.8.4", "pytest>=8.0.0", "flake8>=7.0.0"]
 
 [project.urls]
-homepage = "https://github.com/lszeremeta/knows"
-repository = "https://github.com/lszeremeta/knows"
-"Bug Tracker" = "https://github.com/lszeremeta/knows/issues"
-"Source Code" = "https://github.com/lszeremeta/knows"
+Homepage = "https://github.com/lszeremeta/knows"
+Repository = "https://github.com/lszeremeta/knows"
+Issues = "https://github.com/lszeremeta/knows/issues"
+Changelog = "https://github.com/lszeremeta/knows/releases"
 
 [project.scripts]
 knows = "knows.__main__:main"
