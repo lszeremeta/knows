@@ -7,4 +7,4 @@ Knows is a simple property graph benchmark that generates a graph with a given n
 
 __author__ = 'Łukasz Szeremeta'
 __email__ = 'l.szeremeta.dev+knows@gmail.com'
-__version__ = '2.0.1'
+__version__ = '2.0.2'
