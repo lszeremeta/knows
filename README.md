@@ -1,6 +1,6 @@
 # <img src="https://raw.githubusercontent.com/lszeremeta/knows/main/logo/knows-logo.png" alt="Knows logo" width="300">
 
-[![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10605343.svg)](https://doi.org/10.5281/zenodo.10605343)
+[![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows)
 
 Knows is a powerful and user-friendly tool for benchmarking property graphs. These graphs are crucial in many fields.
 Knows supports
