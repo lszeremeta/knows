@@ -219,6 +219,14 @@ def test_output_format_jpg():
     assert isinstance(jpg_output, bytes)
     assert jpg_output.startswith(b'\xff\xd8')
 
+def test_output_format_jpg_big():
+    """Tests if the graph is converted to JPG format for a bigger graph."""
+    graph = Graph(500, 300)
+    graph.generate()
+    output_format = OutputFormat(graph)
+    jpg_output = output_format.to_format('jpg')
+    assert isinstance(jpg_output, bytes)
+    assert jpg_output.startswith(b'\xff\xd8')
 
 def test_output_format_pdf():
     """Tests if the graph is converted to PDF format."""
@@ -228,3 +236,4 @@ def test_output_format_pdf():
     pdf_output = output_format.to_format('pdf')
     assert isinstance(pdf_output, bytes)
     assert pdf_output.startswith(b'%PDF')
+
