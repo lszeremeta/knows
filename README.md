@@ -56,8 +56,8 @@ You can install knows via PyPI, Docker or run it from the source code.
    ```shell
    pip install knows[draw]
    ```
-   The `draw` installs a `matplotlib` library for graph visualization. You can omit the `[draw]` if you don't need
-   visualization and `svg` output generation.
+   The `draw` installs a `matplotlib` and `scipy` libraries for graph visualization. You can omit the `[draw]` if you
+   don't need visualization and `svg` output generation.
 
 2. **Running Knows**:
    ```shell
