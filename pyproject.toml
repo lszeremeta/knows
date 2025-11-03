@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "knows"
 version = "2.0.3"
-description = "Powerful and user-friendly property graph benchmark that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization"
+description = "Powerful and user-friendly property graph generator that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -19,6 +19,8 @@ dependencies = [
 
 keywords = [
     "knows",
+    "generator",
+    "graph generator",
     "benchmark",
     "yarspg",
     "graphs",
