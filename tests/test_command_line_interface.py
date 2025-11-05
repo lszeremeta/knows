@@ -2,6 +2,7 @@
 
 import pytest
 
+from knows import __version__
 from knows.command_line_interface import CommandLineInterface
 from knows.graph import NODE_PROPERTIES, SAME_EDGE_PROPS, EDGE_PROPERTIES
 
@@ -164,3 +165,14 @@ def test_cli_all_props_short_option(monkeypatch):
     cli = CommandLineInterface()
     assert cli.args.node_props == NODE_PROPERTIES
     assert cli.args.edge_props == EDGE_PROPERTIES
+
+
+def test_cli_version_option(monkeypatch, capsys):
+    """Ensure version option outputs current version and exits."""
+    monkeypatch.setattr('sys.argv', ['prog', '--version'])
+    with pytest.raises(SystemExit) as excinfo:
+        CommandLineInterface()
+
+    assert excinfo.value.code == 0
+    captured = capsys.readouterr()
+    assert captured.out.strip() == f"knows {__version__}"

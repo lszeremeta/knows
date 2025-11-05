@@ -1,5 +1,6 @@
 import argparse
 
+from . import __version__
 from .graph import NODE_PROPERTIES, EDGE_PROPERTIES
 
 
@@ -20,7 +21,7 @@ class CommandLineInterface:
 
         parser = argparse.ArgumentParser(
             description=(
-                "Knows is a powerful and user-friendly property graph benchmark that creates graphs "
+                "Knows is a powerful and user-friendly property graph generation that creates graphs "
                 "with specified node and edge numbers, supporting multiple "
                 "output formats and visualization."
             ),
@@ -55,6 +56,13 @@ class CommandLineInterface:
             type=int,
             default=None,
             help="Seed for random number generation to ensure reproducible results (also between various output formats).",
+        )
+        parser.add_argument(
+            "-v",
+            "--version",
+            action="version",
+            version=f"%(prog)s {__version__}",
+            help="Show program version and exit.",
         )
         parser.add_argument(
             "-f",

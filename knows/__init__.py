@@ -2,7 +2,7 @@
 
 """Knows
 
-Knows is a simple property graph benchmark that generates a graph with a given number of nodes and edges, output in a specified format, and optionally draws it.
+Knows is powerful and user-friendly property graph generator that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization
 """
 
 __author__ = 'Łukasz Szeremeta'

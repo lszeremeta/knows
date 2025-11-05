@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows)
 
-Knows is a powerful and user-friendly tool for benchmarking property graphs. These graphs are crucial in many fields.
+Knows is a powerful and user-friendly tool for generating property graphs. These graphs are crucial in many fields.
 Knows supports
 multiple output formats and basic visualization capabilities, making it a go-to tool for researchers, educators and data
 enthusiasts.
@@ -134,7 +134,7 @@ The `-d`/`--draw` option requires Tkinter.
 ### Basic Usage
 
 ```shell
-knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v] [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]]
              [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
              [output]
@@ -154,6 +154,7 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-f {yarspg,graphml,csv,cypher,gexf,g
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
+- `-v`, `--version`: Show program version and exit.
 - `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
 Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
 visualization.
