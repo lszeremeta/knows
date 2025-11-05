@@ -7,4 +7,4 @@ Knows is powerful and user-friendly property graph generator that creates graphs
 
 __author__ = 'Łukasz Szeremeta'
 __email__ = 'l.szeremeta.dev+knows@gmail.com'
-__version__ = '2.0.4'
+__version__ = '2.0.5'
