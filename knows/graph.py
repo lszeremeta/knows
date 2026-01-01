@@ -12,7 +12,6 @@ NODE_PROPERTY_GENERATORS: dict[str, callable] = {
     'phoneNumber': lambda f: f.phone_number(),
     'favoriteColor': lambda f: f.color_name(),
     'postalAddress': lambda f: f.address(),
-    'friendCount': lambda f: f.random_int(min=1, max=1000),
     'preferredContactMethod': lambda f: f.random_element(
         (
             'inPerson',
@@ -41,7 +40,11 @@ SAME_EDGE_PROPS = frozenset({
     'meetingCount',
 })
 
-NODE_PROPERTIES = list(NODE_PROPERTY_GENERATORS.keys())
+# Properties computed from graph structure (post-generation)
+COMPUTED_NODE_PROPERTIES = frozenset({'friendCount'})
+
+# All available node properties (generated + computed)
+NODE_PROPERTIES = list(NODE_PROPERTY_GENERATORS.keys()) + list(COMPUTED_NODE_PROPERTIES)
 EDGE_PROPERTIES = list(EDGE_PROPERTY_GENERATORS.keys())
 
 from typing import Optional, List
@@ -67,6 +70,7 @@ class Graph:
         self._validate_properties()
         self._add_nodes()
         self._add_edges()
+        self._compute_structural_properties()
 
     def _validate_parameters(self) -> None:
         if self.num_nodes <= 1 or self.num_edges < 0:
@@ -86,8 +90,9 @@ class Graph:
         for i in range(1, self.num_nodes + 1):
             properties = {'label': 'Person'}
             for prop in self.node_props:
-                generator = NODE_PROPERTY_GENERATORS[prop]
-                properties[prop] = generator(self.faker)
+                if prop in NODE_PROPERTY_GENERATORS:
+                    generator = NODE_PROPERTY_GENERATORS[prop]
+                    properties[prop] = generator(self.faker)
             self.graph.add_node(f"N{i}", **properties)
 
     def _add_edges(self) -> None:
@@ -105,3 +110,18 @@ class Graph:
                         if prop in self.edge_props and prop in reverse_props:
                             properties[prop] = reverse_props[prop]
                 self.graph.add_edge(u, v, **properties)
+
+    def _compute_structural_properties(self) -> None:
+        """Compute node properties that depend on graph structure.
+        
+        This method is called after edge generation to ensure properties
+        like friendCount reflect the actual graph topology.
+        """
+        if 'friendCount' not in self.node_props:
+            return
+        
+        # For directed graph, count unique neighbors (both directions)
+        # Using undirected view is O(1) per node for degree lookup
+        undirected_view = self.graph.to_undirected(as_view=True)
+        for node_id in self.graph.nodes():
+            self.graph.nodes[node_id]['friendCount'] = undirected_view.degree(node_id)

@@ -37,7 +37,7 @@ enthusiasts.
     - `job`
     - `phoneNumber`
     - `postalAddress`
-    - `friendCount` [1..1000]
+    - `friendCount` (actual node degree - number of unique connections)
     - `preferredContactMethod` [`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`]
 - Additional edge properties:
     - `lastMeetingCity`
