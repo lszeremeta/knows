@@ -18,11 +18,6 @@ dependencies = [
     "jsonschema>=4.22.0",
 ]
 
-[project.optional-dependencies]
-draw = ["matplotlib>=3.10.0", "scipy>=1.14.0"]
-test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
-dev =  ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
-
 keywords = [
     "knows",
     "generator",
@@ -92,6 +87,11 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+
+[project.optional-dependencies]
+draw = ["matplotlib>=3.10.0", "scipy>=1.14.0"]
+test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
+dev =  ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/lszeremeta/knows"
