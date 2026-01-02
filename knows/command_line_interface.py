@@ -1,4 +1,5 @@
 import argparse
+from pathlib import Path
 
 from . import __version__
 from .graph import NODE_PROPERTIES, EDGE_PROPERTIES
@@ -95,7 +96,7 @@ class CommandLineInterface:
             help=(
                     "Space-separated node properties. Available: "
                     + ', '.join(NODE_PROPERTIES)
-                    + "."
+                    + ". Ignored when --schema is used."
             ),
         )
         parser.add_argument(
@@ -107,14 +108,25 @@ class CommandLineInterface:
             help=(
                     "Space-separated edge properties. Available: "
                     + ', '.join(EDGE_PROPERTIES)
-                    + "."
+                    + ". Ignored when --schema is used."
             ),
         )
         parser.add_argument(
             "-ap",
             "--all-props",
             action="store_true",
-            help="Use all available node and edge properties.",
+            help="Use all available node and edge properties. Ignored when --schema is used.",
+        )
+        parser.add_argument(
+            "--schema",
+            type=str,
+            default=None,
+            metavar="FILE",
+            help=(
+                "Path to JSON schema file defining custom node/edge types and properties. "
+                "When specified, overrides -np, -ep, and -ap options. "
+                "Schema format follows GQL (ISO/IEC 39075) conventions."
+            ),
         )
         parser.add_argument("-d", "--draw", action="store_true",
                             help="Show simple image of the graph (default is no image). Requires Tkinter. This option may not work in the Docker. If you want to generate an image of the graph, use the svg output format and save it to a file.")
@@ -131,4 +143,13 @@ class CommandLineInterface:
         if args.all_props:
             args.node_props = NODE_PROPERTIES
             args.edge_props = EDGE_PROPERTIES
+
+        # Validate schema file exists if specified
+        if args.schema:
+            schema_path = Path(args.schema)
+            if not schema_path.exists():
+                parser.error(f"Schema file not found: {args.schema}")
+            if not schema_path.suffix.lower() == '.json':
+                parser.error(f"Schema file must be JSON format: {args.schema}")
+
         return args

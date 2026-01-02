@@ -15,10 +15,17 @@ def main():
         num_nodes = cli.args.nodes or rng.randint(2, 100)
         num_edges = cli.args.edges or rng.randint(num_nodes // 2, num_nodes)
 
+        # Load schema if specified
+        schema = None
+        if cli.args.schema:
+            from .schema import load_schema
+            schema = load_schema(cli.args.schema)
+
         graph = Graph(num_nodes, num_edges,
                       node_props=cli.args.node_props,
                       edge_props=cli.args.edge_props,
-                      seed=cli.args.seed)
+                      seed=cli.args.seed,
+                      schema=schema)
         graph.generate()
 
         output = OutputFormat(graph)
