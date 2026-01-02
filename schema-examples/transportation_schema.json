@@ -18,13 +18,16 @@
         "zone": {"type": "Int", "min": 1, "max": 10}
     },
     "edgeProperties": {
-        "line": "String",
-        "lineColor": "Color",
-        "distance": {"type": "Float", "min": 0.1, "max": 500.0, "precision": 1},
-        "travelTime": {"type": "Int", "min": 1, "max": 600},
-        "frequency": {"type": "Int", "min": 1, "max": 60},
-        "transportType": {"enum": ["subway", "bus", "train", "tram", "ferry", "express"]},
-        "isExpress": "Boolean",
-        "fare": {"type": "Float", "min": 0.5, "max": 100.0, "precision": 2}
+        "line": {"type": "String", "symmetric": true},
+        "lineColor": {"type": "Color", "symmetric": true},
+        "distance": {"type": "Float", "min": 0.1, "max": 500.0, "precision": 1, "symmetric": true},
+        "travelTime": {"type": "Int", "min": 1, "max": 600, "symmetric": true},
+        "frequency": {"type": "Int", "min": 1, "max": 60, "symmetric": true},
+        "transportType": {"enum": ["subway", "bus", "train", "tram", "ferry", "express"], "symmetric": true},
+        "isExpress": {"type": "Boolean", "symmetric": true},
+        "fare": {"type": "Float", "min": 0.5, "max": 100.0, "precision": 2, "symmetric": true}
+    },
+    "computedNodeProperties": {
+        "connectionCount": "degree"
     }
 }

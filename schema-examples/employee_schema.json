@@ -20,10 +20,13 @@
         "performanceRating": {"type": "Float", "min": 1.0, "max": 5.0, "precision": 1}
     },
     "edgeProperties": {
-        "sharedProjects": {"type": "Int", "min": 1, "max": 50},
-        "collaborationStrength": {"type": "Float", "min": 0.0, "max": 1.0},
-        "since": "Date",
-        "lastInteraction": "Date",
+        "sharedProjects": {"type": "Int", "min": 1, "max": 50, "symmetric": true},
+        "collaborationStrength": {"type": "Float", "min": 0.0, "max": 1.0, "symmetric": true},
+        "since": {"type": "Date", "symmetric": true},
+        "lastInteraction": {"type": "Date", "symmetric": true},
         "collaborationType": {"enum": ["sameTeam", "crossFunctional", "mentorship", "projectBased"]}
+    },
+    "computedNodeProperties": {
+        "collaboratorCount": "degree"
     }
 }

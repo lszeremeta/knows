@@ -21,13 +21,16 @@
         "primaryGenre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"]}
     },
     "edgeProperties": {
-        "movieTitle": "Sentence",
-        "movieYear": {"type": "Year", "min": 1920, "max": 2025},
-        "sharedFilms": {"type": "Int", "min": 1, "max": 50},
-        "firstCollaboration": {"type": "Year", "min": 1920, "max": 2025},
-        "lastCollaboration": {"type": "Year", "min": 1920, "max": 2025},
-        "genre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"]},
-        "boxOfficeTotal": {"type": "Int", "min": 0, "max": 3000000000},
-        "avgRating": {"type": "Float", "min": 1.0, "max": 10.0, "precision": 1}
+        "movieTitle": {"type": "Sentence", "symmetric": true},
+        "movieYear": {"type": "Year", "min": 1920, "max": 2025, "symmetric": true},
+        "sharedFilms": {"type": "Int", "min": 1, "max": 50, "symmetric": true},
+        "firstCollaboration": {"type": "Year", "min": 1920, "max": 2025, "symmetric": true},
+        "lastCollaboration": {"type": "Year", "min": 1920, "max": 2025, "symmetric": true},
+        "genre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"], "symmetric": true},
+        "boxOfficeTotal": {"type": "Int", "min": 0, "max": 3000000000, "symmetric": true},
+        "avgRating": {"type": "Float", "min": 1.0, "max": 10.0, "precision": 1, "symmetric": true}
+    },
+    "computedNodeProperties": {
+        "costarCount": "degree"
     }
 }

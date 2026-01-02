@@ -7,6 +7,9 @@
         "age": {"type": "Int", "min": 18, "max": 80}
     },
     "edgeProperties": {
-        "since": "Date"
+        "since": {"type": "Date", "symmetric": true}
+    },
+    "computedNodeProperties": {
+        "friendCount": "degree"
     }
 }
