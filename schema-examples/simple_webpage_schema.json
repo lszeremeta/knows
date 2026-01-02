@@ -1,0 +1,12 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Page",
+    "edgeLabel": "linksTo",
+    "nodeProperties": {
+        "url": "Url",
+        "title": "Sentence"
+    },
+    "edgeProperties": {
+        "anchor": "String"
+    }
+}

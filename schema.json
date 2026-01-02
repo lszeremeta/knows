@@ -1,0 +1,182 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/lszeremeta/knows/schema.json",
+    "title": "Knows Graph Schema",
+    "description": "Schema for defining custom node and edge types in Knows property graph generator. Follows GQL (ISO/IEC 39075) conventions.",
+    "type": "object",
+    "properties": {
+        "nodeLabel": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Label for all generated nodes",
+            "default": "Node"
+        },
+        "edgeLabel": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Label for all generated edges",
+            "default": "edge"
+        },
+        "nodeProperties": {
+            "type": "object",
+            "description": "Property definitions for nodes",
+            "additionalProperties": {
+                "$ref": "#/$defs/propertyDefinition"
+            }
+        },
+        "edgeProperties": {
+            "type": "object",
+            "description": "Property definitions for edges (supports 'symmetric: true' for bidirectional consistency)",
+            "additionalProperties": {
+                "$ref": "#/$defs/edgePropertyDefinition"
+            }
+        },
+        "computedNodeProperties": {
+            "type": "object",
+            "description": "Node properties computed from graph structure after generation",
+            "additionalProperties": {
+                "type": "string",
+                "enum": ["degree"],
+                "description": "Computation type: 'degree' = total unique connections"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "$defs": {
+        "propertyDefinition": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/simpleType"
+                },
+                {
+                    "$ref": "#/$defs/complexType"
+                },
+                {
+                    "$ref": "#/$defs/enumType"
+                }
+            ]
+        },
+        "simpleType": {
+            "type": "string",
+            "enum": [
+                "String", "STRING",
+                "Name", "FirstName", "LastName", "FullName",
+                "Email", "Phone", "Address", "City", "Country",
+                "Company", "Job",
+                "Text", "Sentence", "Paragraph",
+                "Url", "Color", "Uuid",
+                "Int", "Integer", "INTEGER", "INT64", "UINT64",
+                "Float", "FLOAT64", "Double",
+                "Boolean", "Bool", "BOOLEAN", "BOOL",
+                "Date", "DATE", "DateTime", "DATETIME", "ZONED DATETIME",
+                "Time", "Year"
+            ],
+            "description": "Simple type name"
+        },
+        "complexType": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "String", "STRING",
+                        "Name", "FirstName", "LastName", "FullName",
+                        "Email", "Phone", "Address", "City", "Country",
+                        "Company", "Job",
+                        "Text", "Sentence", "Paragraph",
+                        "Url", "Color", "Uuid",
+                        "Int", "Integer", "INTEGER", "INT64", "UINT64",
+                        "Float", "FLOAT64", "Double",
+                        "Boolean", "Bool", "BOOLEAN", "BOOL",
+                        "Date", "DATE", "DateTime", "DATETIME", "ZONED DATETIME",
+                        "Time", "Year"
+                    ],
+                    "description": "Property type name"
+                },
+                "min": {
+                    "oneOf": [
+                        {"type": "number"},
+                        {"type": "string", "format": "date"}
+                    ],
+                    "description": "Minimum value (for numeric types) or start date (for date types)"
+                },
+                "max": {
+                    "oneOf": [
+                        {"type": "number"},
+                        {"type": "string", "format": "date"}
+                    ],
+                    "description": "Maximum value (for numeric types) or end date (for date types)"
+                },
+                "precision": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Decimal places for Float and Double types"
+                },
+                "maxLength": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Maximum character length for Text type"
+                },
+                "symmetric": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, edges in both directions (A->B and B->A) will share this property value"
+                }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+        },
+        "enumType": {
+            "type": "object",
+            "properties": {
+                "enum": {
+                    "type": "array",
+                    "items": {
+                        "type": ["string", "number", "boolean"]
+                    },
+                    "minItems": 1,
+                    "description": "List of possible values"
+                },
+                "symmetric": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, edges in both directions (A->B and B->A) will share this property value"
+                }
+            },
+            "required": ["enum"],
+            "additionalProperties": false
+        },
+        "edgePropertyDefinition": {
+            "oneOf": [
+                {
+                    "$ref": "#/$defs/simpleType"
+                },
+                {
+                    "$ref": "#/$defs/complexType"
+                },
+                {
+                    "$ref": "#/$defs/enumType"
+                }
+            ],
+            "description": "Edge property definition (same as node, but supports 'symmetric' option)"
+        }
+    },
+    "examples": [
+        {
+            "nodeLabel": "Employee",
+            "edgeLabel": "collaborates",
+            "nodeProperties": {
+                "name": "Name",
+                "department": {"enum": ["HR", "Engineering", "Sales"]},
+                "salary": {"type": "Int", "min": 30000, "max": 200000}
+            },
+            "edgeProperties": {
+                "since": {"type": "Date", "symmetric": true},
+                "projectCount": {"type": "Int", "min": 1, "max": 100}
+            },
+            "computedNodeProperties": {
+                "connectionCount": "degree"
+            }
+        }
+    ]
+}

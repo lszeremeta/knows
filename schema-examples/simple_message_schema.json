@@ -1,0 +1,13 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "User",
+    "edgeLabel": "messaged",
+    "nodeProperties": {
+        "username": "String",
+        "email": "Email"
+    },
+    "edgeProperties": {
+        "sentAt": "DateTime",
+        "messageCount": {"type": "Int", "min": 1, "max": 1000}
+    }
+}

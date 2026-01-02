@@ -1,0 +1,28 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "User",
+    "edgeLabel": "follows",
+    "nodeProperties": {
+        "username": "String",
+        "displayName": "Name",
+        "email": "Email",
+        "bio": "Sentence",
+        "profileUrl": "Url",
+        "location": "City",
+        "website": "Url",
+        "followerCount": {"type": "Int", "min": 0, "max": 1000000},
+        "followingCount": {"type": "Int", "min": 0, "max": 10000},
+        "postCount": {"type": "Int", "min": 0, "max": 50000},
+        "joinDate": "Date",
+        "lastActiveDate": "Date",
+        "verified": "Boolean",
+        "isPrivate": "Boolean",
+        "accountType": {"enum": ["personal", "business", "creator", "government", "media"]}
+    },
+    "edgeProperties": {
+        "followedAt": "Date",
+        "notificationsEnabled": "Boolean",
+        "isMutual": "Boolean",
+        "interactionScore": {"type": "Float", "min": 0.0, "max": 1.0}
+    }
+}

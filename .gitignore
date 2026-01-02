@@ -7,6 +7,8 @@
 *.gexf
 *.gml
 *.json
+!schema.json
+!schema-examples/*.json
 *.png
 !logo/*.png
 *.jpg

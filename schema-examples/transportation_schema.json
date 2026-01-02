@@ -1,0 +1,30 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Station",
+    "edgeLabel": "connectsTo",
+    "nodeProperties": {
+        "stationId": "Uuid",
+        "name": "String",
+        "city": "City",
+        "address": "Address",
+        "latitude": {"type": "Float", "min": -90.0, "max": 90.0, "precision": 6},
+        "longitude": {"type": "Float", "min": -180.0, "max": 180.0, "precision": 6},
+        "stationType": {"enum": ["subway", "bus", "train", "tram", "ferry", "airport", "hub"]},
+        "platforms": {"type": "Int", "min": 1, "max": 50},
+        "dailyPassengers": {"type": "Int", "min": 100, "max": 500000},
+        "openedYear": {"type": "Year", "min": 1850, "max": 2025},
+        "isAccessible": "Boolean",
+        "hasParking": "Boolean",
+        "zone": {"type": "Int", "min": 1, "max": 10}
+    },
+    "edgeProperties": {
+        "line": "String",
+        "lineColor": "Color",
+        "distance": {"type": "Float", "min": 0.1, "max": 500.0, "precision": 1},
+        "travelTime": {"type": "Int", "min": 1, "max": 600},
+        "frequency": {"type": "Int", "min": 1, "max": 60},
+        "transportType": {"enum": ["subway", "bus", "train", "tram", "ferry", "express"]},
+        "isExpress": "Boolean",
+        "fare": {"type": "Float", "min": 0.5, "max": 100.0, "precision": 2}
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Task",
+    "edgeLabel": "dependsOn",
+    "nodeProperties": {
+        "title": "Sentence",
+        "status": {"enum": ["todo", "inProgress", "done"]}
+    },
+    "edgeProperties": {
+        "isBlocking": "Boolean"
+    }
+}

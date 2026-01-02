@@ -1,0 +1,34 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Service",
+    "edgeLabel": "dependsOn",
+    "nodeProperties": {
+        "serviceId": "Uuid",
+        "name": "String",
+        "description": "Sentence",
+        "version": "String",
+        "owner": "Name",
+        "team": "String",
+        "serviceType": {"enum": ["api", "database", "cache", "queue", "storage", "compute", "gateway", "monitoring", "auth", "cdn"]},
+        "environment": {"enum": ["production", "staging", "development", "testing"]},
+        "region": {"enum": ["us-east", "us-west", "eu-west", "eu-central", "ap-south", "ap-northeast", "ap-southeast"]},
+        "tier": {"enum": ["critical", "high", "medium", "low"]},
+        "uptime": {"type": "Float", "min": 90.0, "max": 100.0, "precision": 3},
+        "latencyMs": {"type": "Int", "min": 1, "max": 5000},
+        "requestsPerSecond": {"type": "Int", "min": 0, "max": 1000000},
+        "deployedAt": "Date",
+        "lastUpdated": "Date",
+        "isHealthy": "Boolean",
+        "isDeprecated": "Boolean",
+        "cost": {"type": "Float", "min": 0.0, "max": 100000.0, "precision": 2}
+    },
+    "edgeProperties": {
+        "dependencyType": {"enum": ["sync", "async", "optional", "fallback", "readonly", "writethrough"]},
+        "protocol": {"enum": ["http", "grpc", "tcp", "amqp", "kafka", "redis", "sql", "graphql"]},
+        "callsPerMinute": {"type": "Int", "min": 0, "max": 100000},
+        "avgLatencyMs": {"type": "Int", "min": 1, "max": 10000},
+        "errorRate": {"type": "Float", "min": 0.0, "max": 100.0, "precision": 2},
+        "isCritical": "Boolean",
+        "timeout": {"type": "Int", "min": 100, "max": 60000}
+    }
+}

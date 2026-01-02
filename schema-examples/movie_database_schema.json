@@ -1,0 +1,33 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Actor",
+    "edgeLabel": "costarredWith",
+    "nodeProperties": {
+        "actorId": "Uuid",
+        "name": "Name",
+        "birthDate": "Date",
+        "birthPlace": "City",
+        "nationality": "Country",
+        "biography": "Paragraph",
+        "gender": {"enum": ["male", "female", "non-binary", "undisclosed"]},
+        "height": {"type": "Int", "min": 120, "max": 220},
+        "filmCount": {"type": "Int", "min": 1, "max": 500},
+        "awardsWon": {"type": "Int", "min": 0, "max": 100},
+        "awardsNominated": {"type": "Int", "min": 0, "max": 200},
+        "netWorth": {"type": "Int", "min": 10000, "max": 500000000},
+        "debutYear": {"type": "Year", "min": 1920, "max": 2025},
+        "isActive": "Boolean",
+        "socialFollowers": {"type": "Int", "min": 0, "max": 500000000},
+        "primaryGenre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"]}
+    },
+    "edgeProperties": {
+        "movieTitle": "Sentence",
+        "movieYear": {"type": "Year", "min": 1920, "max": 2025},
+        "sharedFilms": {"type": "Int", "min": 1, "max": 50},
+        "firstCollaboration": {"type": "Year", "min": 1920, "max": 2025},
+        "lastCollaboration": {"type": "Year", "min": 1920, "max": 2025},
+        "genre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"]},
+        "boxOfficeTotal": {"type": "Int", "min": 0, "max": 3000000000},
+        "avgRating": {"type": "Float", "min": 1.0, "max": 10.0, "precision": 1}
+    }
+}

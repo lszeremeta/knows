@@ -1,0 +1,12 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Person",
+    "edgeLabel": "friendOf",
+    "nodeProperties": {
+        "name": "Name",
+        "age": {"type": "Int", "min": 18, "max": 80}
+    },
+    "edgeProperties": {
+        "since": "Date"
+    }
+}

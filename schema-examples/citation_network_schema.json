@@ -1,0 +1,27 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Paper",
+    "edgeLabel": "cites",
+    "nodeProperties": {
+        "doi": "Uuid",
+        "title": "Sentence",
+        "abstract": "Paragraph",
+        "authors": "Name",
+        "journal": "Company",
+        "publicationDate": "Date",
+        "field": {"enum": ["Computer Science", "Physics", "Biology", "Chemistry", "Mathematics", "Medicine", "Engineering", "Psychology", "Economics", "Environmental Science"]},
+        "subfield": "String",
+        "citationCount": {"type": "Int", "min": 0, "max": 100000},
+        "pageCount": {"type": "Int", "min": 1, "max": 500},
+        "isOpenAccess": "Boolean",
+        "peerReviewed": "Boolean",
+        "impactFactor": {"type": "Float", "min": 0.0, "max": 100.0, "precision": 2},
+        "documentType": {"enum": ["article", "review", "conference", "preprint", "thesis", "book"]}
+    },
+    "edgeProperties": {
+        "citationContext": {"enum": ["background", "method", "result", "comparison", "extension", "critique"]},
+        "citationPosition": {"enum": ["introduction", "methods", "results", "discussion", "conclusion"]},
+        "isSelfCitation": "Boolean",
+        "year": {"type": "Year", "min": 1950, "max": 2025}
+    }
+}

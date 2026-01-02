@@ -1,0 +1,26 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Person",
+    "edgeLabel": "knows",
+    "nodeProperties": {
+        "firstName": "FirstName",
+        "lastName": "LastName",
+        "company": "Company",
+        "job": "Job",
+        "phoneNumber": "Phone",
+        "favoriteColor": "Color",
+        "postalAddress": "Address",
+        "preferredContactMethod": {
+            "enum": ["inPerson", "email", "postalMail", "phone", "textMessage", "videoCall", "noPreference"]
+        }
+    },
+    "edgeProperties": {
+        "strength": {"type": "Int", "min": 1, "max": 100},
+        "lastMeetingCity": {"type": "City", "symmetric": true},
+        "lastMeetingDate": {"type": "Date", "min": "1955-01-01", "max": "2025-06-28", "symmetric": true},
+        "meetingCount": {"type": "Int", "min": 1, "max": 10000, "symmetric": true}
+    },
+    "computedNodeProperties": {
+        "friendCount": "degree"
+    }
+}

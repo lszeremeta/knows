@@ -1,0 +1,29 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Employee",
+    "edgeLabel": "collaboratesWith",
+    "nodeProperties": {
+        "employeeId": "Uuid",
+        "firstName": "FirstName",
+        "lastName": "LastName",
+        "email": "Email",
+        "phone": "Phone",
+        "jobTitle": "Job",
+        "department": {"enum": ["Engineering", "Marketing", "Sales", "HR", "Finance", "Legal", "Operations", "Product", "Design", "Support"]},
+        "office": "City",
+        "salary": {"type": "Int", "min": 35000, "max": 250000},
+        "hireDate": "Date",
+        "birthDate": "Date",
+        "isManager": "Boolean",
+        "isRemote": "Boolean",
+        "yearsOfExperience": {"type": "Int", "min": 0, "max": 40},
+        "performanceRating": {"type": "Float", "min": 1.0, "max": 5.0, "precision": 1}
+    },
+    "edgeProperties": {
+        "sharedProjects": {"type": "Int", "min": 1, "max": 50},
+        "collaborationStrength": {"type": "Float", "min": 0.0, "max": 1.0},
+        "since": "Date",
+        "lastInteraction": "Date",
+        "collaborationType": {"enum": ["sameTeam", "crossFunctional", "mentorship", "projectBased"]}
+    }
+}

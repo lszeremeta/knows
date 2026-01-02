@@ -1,0 +1,33 @@
+{
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "nodeLabel": "Account",
+    "edgeLabel": "transfersTo",
+    "nodeProperties": {
+        "accountId": "Uuid",
+        "accountHolder": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "accountType": {"enum": ["checking", "savings", "business", "investment", "credit", "loan"]},
+        "bank": "Company",
+        "branch": "City",
+        "balance": {"type": "Float", "min": 0.0, "max": 10000000.0, "precision": 2},
+        "creditLimit": {"type": "Float", "min": 0.0, "max": 500000.0, "precision": 2},
+        "openedDate": "Date",
+        "lastActivityDate": "Date",
+        "isActive": "Boolean",
+        "isVerified": "Boolean",
+        "riskScore": {"type": "Float", "min": 0.0, "max": 100.0, "precision": 1},
+        "currency": {"enum": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"]}
+    },
+    "edgeProperties": {
+        "amount": {"type": "Float", "min": 0.01, "max": 1000000.0, "precision": 2},
+        "transactionDate": "Date",
+        "transactionTime": "Time",
+        "transactionType": {"enum": ["transfer", "payment", "refund", "withdrawal", "deposit", "fee"]},
+        "status": {"enum": ["completed", "pending", "failed", "reversed", "flagged"]},
+        "reference": "Uuid",
+        "description": "Sentence",
+        "isFlagged": "Boolean",
+        "fee": {"type": "Float", "min": 0.0, "max": 100.0, "precision": 2}
+    }
+}
