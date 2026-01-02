@@ -5,6 +5,11 @@
     "description": "Schema for defining custom node and edge types in Knows property graph generator. GQL-inspired (ISO/IEC 39075).",
     "type": "object",
     "properties": {
+        "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "Reference to the JSON Schema for validation"
+        },
         "nodeLabel": {
             "type": "string",
             "minLength": 1,
