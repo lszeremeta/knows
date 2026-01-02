@@ -171,7 +171,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`. Ignored when `--schema` is used.
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
 - `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
-  overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format (ISO/IEC 39075).
+  overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
   See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
 - `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
   may not work in Docker. If you want to generate an image of the graph, use the `svg`, `png`, `jpg`, or `pdf` output
