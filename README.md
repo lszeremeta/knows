@@ -138,9 +138,10 @@ The `-d`/`--draw` option requires Tkinter.
 ### Basic Usage
 
 ```shell
-knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v] [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
-             [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]]
-             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d]
+knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
+             [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+             [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,preferredContactMethod,friendCount} ...]]
+             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [--schema FILE] [-d]
              [output]
 ```
 
@@ -153,7 +154,7 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v] [-f {yarspg,graphml,csv,cypher,g
 
 ### Options
 
-- `-h`, `--help`: Show this help message and exit.
+- `-h`, `--help`: Show help message and exit.
 - `-n NODES`, `--nodes NODES`: Number of nodes in the graph. Selected randomly if not specified.
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
@@ -164,12 +165,12 @@ Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf`
 visualization.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
-`postalAddress`, `friendCount`, `preferredContactMethod`.
+`postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
 - `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
-  Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`.
+  Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`. Ignored when `--schema` is used.
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
-- `-S FILE`, `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
+- `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
   overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format (ISO/IEC 39075).
   See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
 - `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option

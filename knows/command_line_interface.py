@@ -125,11 +125,12 @@ class CommandLineInterface:
             help=(
                 "Path to JSON schema file defining custom node/edge types and properties. "
                 "When specified, overrides -np, -ep, and -ap options. "
-                "GQL-inspired schema format (ISO/IEC 39075)."
+                "GQL-inspired schema format (ISO/IEC 39075). "
+                "See https://github.com/lszeremeta/knows/SCHEMA.md for details."
             ),
         )
         parser.add_argument("-d", "--draw", action="store_true",
-                            help="Show simple image of the graph (default is no image). Requires Tkinter. This option may not work in the Docker. If you want to generate an image of the graph, use the svg output format and save it to a file.")
+                            help="Show simple image of the graph (default is no image). Requires Tkinter. This option may not work in the Docker. If you want to generate an image of the graph, use the svg, png, jpg, or pdf output format and save it to a file.")
         parser.add_argument(
             "output",
             nargs="?",
