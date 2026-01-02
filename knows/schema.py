@@ -25,15 +25,36 @@ Example schema file:
 
 import datetime
 import json
+from importlib import resources
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from faker import Faker
+import jsonschema
+from jsonschema import ValidationError
 
 
 class SchemaError(Exception):
     """Raised when schema validation fails."""
     pass
+
+
+def _load_json_schema() -> dict:
+    """Load the JSON Schema for validating Knows graph schemas."""
+    schema_file = resources.files(__package__).joinpath("schema.json")
+    return json.loads(schema_file.read_text(encoding="utf-8"))
+
+
+# Lazy-loaded JSON Schema
+_KNOWS_JSON_SCHEMA: Optional[dict] = None
+
+
+def _get_json_schema() -> dict:
+    """Get the JSON Schema, loading it on first access."""
+    global _KNOWS_JSON_SCHEMA
+    if _KNOWS_JSON_SCHEMA is None:
+        _KNOWS_JSON_SCHEMA = _load_json_schema()
+    return _KNOWS_JSON_SCHEMA
 
 
 # Type definitions mapping GQL-like types to Faker generators
@@ -151,7 +172,7 @@ def load_schema(path: Union[str, Path]) -> dict:
 
 
 def _validate_schema(schema: dict) -> None:
-    """Validate schema structure and types.
+    """Validate schema structure and types using JSON Schema.
 
     Args:
         schema: Schema dictionary to validate.
@@ -162,94 +183,90 @@ def _validate_schema(schema: dict) -> None:
     if not isinstance(schema, dict):
         raise SchemaError("Schema must be a JSON object")
 
-    # Validate nodeLabel
-    if 'nodeLabel' in schema:
-        if not isinstance(schema['nodeLabel'], str):
-            raise SchemaError("nodeLabel must be a string")
-        if not schema['nodeLabel']:
-            raise SchemaError("nodeLabel cannot be empty")
-
-    # Validate edgeLabel
-    if 'edgeLabel' in schema:
-        if not isinstance(schema['edgeLabel'], str):
-            raise SchemaError("edgeLabel must be a string")
-        if not schema['edgeLabel']:
-            raise SchemaError("edgeLabel cannot be empty")
-
-    # Validate nodeProperties
-    if 'nodeProperties' in schema:
-        if not isinstance(schema['nodeProperties'], dict):
-            raise SchemaError("nodeProperties must be an object")
-        for prop_name, prop_def in schema['nodeProperties'].items():
-            _validate_property_definition(prop_name, prop_def, 'node')
-
-    # Validate edgeProperties
-    if 'edgeProperties' in schema:
-        if not isinstance(schema['edgeProperties'], dict):
-            raise SchemaError("edgeProperties must be an object")
-        for prop_name, prop_def in schema['edgeProperties'].items():
-            _validate_property_definition(prop_name, prop_def, 'edge')
-
-    # Validate computedNodeProperties
-    if 'computedNodeProperties' in schema:
-        if not isinstance(schema['computedNodeProperties'], dict):
-            raise SchemaError("computedNodeProperties must be an object")
-        for prop_name, prop_type in schema['computedNodeProperties'].items():
-            if not isinstance(prop_type, str):
-                raise SchemaError(
-                    f"Computed property '{prop_name}' must be a string type"
-                )
-            if prop_type not in COMPUTED_PROPERTY_TYPES:
-                raise SchemaError(
-                    f"Unknown computed property type '{prop_type}' for '{prop_name}'. "
-                    f"Available types: {', '.join(sorted(COMPUTED_PROPERTY_TYPES.keys()))}"
-                )
+    try:
+        jsonschema.validate(instance=schema, schema=_get_json_schema())
+    except ValidationError as e:
+        raise SchemaError(_format_validation_error(e)) from None
 
 
-def _validate_property_definition(name: str, definition: Union[str, dict], context: str) -> None:
-    """Validate a single property definition.
+def _format_validation_error(error: ValidationError) -> str:
+    """Format jsonschema ValidationError into a user-friendly message.
 
     Args:
-        name: Property name.
-        definition: Property type definition (string or dict).
-        context: 'node' or 'edge' for error messages.
+        error: The jsonschema ValidationError.
 
-    Raises:
-        SchemaError: If property definition is invalid.
+    Returns:
+        A user-friendly error message.
     """
-    if isinstance(definition, str):
-        # Simple type like "String" or "Int"
-        type_name = TYPE_ALIASES.get(definition.upper(), definition)
-        if type_name not in TYPE_GENERATORS:
-            raise SchemaError(
-                f"Unknown type '{definition}' for {context} property '{name}'. "
-                f"Available types: {', '.join(sorted(TYPE_GENERATORS.keys()))}"
-            )
-    elif isinstance(definition, dict):
-        # Complex type definition
-        if 'type' not in definition and 'enum' not in definition:
-            raise SchemaError(
-                f"Property '{name}' must have 'type' or 'enum' field"
-            )
+    path = list(error.absolute_path)
 
-        if 'enum' in definition:
-            # Enum type
-            values = definition['enum']
-            if not isinstance(values, list) or len(values) == 0:
-                raise SchemaError(
-                    f"Property '{name}' enum must be a non-empty array"
+    # Handle specific validation scenarios
+    if error.validator == "type":
+        if path:
+            field_name = path[-1] if isinstance(path[-1], str) else ".".join(str(p) for p in path)
+            # Check if this is a computed property type error
+            if len(path) >= 2 and path[-2] == "computedNodeProperties":
+                return f"Computed property '{field_name}' must be a string type"
+            return f"{field_name} must be a {error.validator_value}"
+        return f"Schema must be a {error.validator_value}"
+
+    if error.validator == "minLength":
+        field_name = path[-1] if path else "value"
+        return f"{field_name} cannot be empty"
+
+    if error.validator == "enum":
+        if path:
+            # Check if this is a property type error
+            if len(path) >= 2 and path[-2] in ("nodeProperties", "edgeProperties"):
+                prop_name = path[-1]
+                return (
+                    f"Unknown type '{error.instance}' for property '{prop_name}'. "
+                    f"Available types: {', '.join(sorted(TYPE_GENERATORS.keys()))}"
                 )
-        elif 'type' in definition:
-            # Typed property with constraints
-            type_name = TYPE_ALIASES.get(definition['type'].upper(), definition['type'])
-            if type_name not in TYPE_GENERATORS:
-                raise SchemaError(
-                    f"Unknown type '{definition['type']}' for {context} property '{name}'"
+            if len(path) >= 2 and path[-2] == "computedNodeProperties":
+                prop_name = path[-1]
+                return (
+                    f"Unknown computed property type '{error.instance}' for '{prop_name}'. "
+                    f"Available types: {', '.join(sorted(COMPUTED_PROPERTY_TYPES.keys()))}"
                 )
-    else:
-        raise SchemaError(
-            f"Property '{name}' must be a string or object, got {type(definition).__name__}"
-        )
+            # Handle type field in complex definition
+            if path and path[-1] == "type":
+                return (
+                    f"Unknown type '{error.instance}'. "
+                    f"Available types: {', '.join(sorted(TYPE_GENERATORS.keys()))}"
+                )
+        return f"'{error.instance}' is not one of {error.validator_value}"
+
+    if error.validator == "minItems":
+        if path and len(path) >= 2:
+            prop_name = path[-2]
+            return f"Property '{prop_name}' enum must be a non-empty array"
+        return "enum must be a non-empty array"
+
+    if error.validator == "additionalProperties":
+        if path:
+            return f"Unknown property in schema at '{'.'.join(str(p) for p in path)}'"
+        return f"Additional properties are not allowed: {error.message}"
+
+    if error.validator == "oneOf":
+        if path and len(path) >= 2 and path[-2] in ("nodeProperties", "edgeProperties"):
+            prop_name = path[-1]
+            # Check if it's missing type/enum
+            if isinstance(error.instance, dict):
+                if "type" not in error.instance and "enum" not in error.instance:
+                    return f"Property '{prop_name}' must have 'type' or 'enum' field"
+            return f"Invalid definition for property '{prop_name}'"
+        return "Invalid property definition"
+
+    if error.validator == "required":
+        missing = error.validator_value[0] if error.validator_value else "field"
+        if path and len(path) >= 2:
+            prop_name = path[-1]
+            return f"Property '{prop_name}' must have '{missing}' field"
+        return f"Missing required field: {missing}"
+
+    # Default: return the original message
+    return error.message
 
 
 def _create_generator(definition: Union[str, dict]) -> Callable[[Faker], Any]:

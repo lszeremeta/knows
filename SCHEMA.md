@@ -8,7 +8,7 @@ schema file:
 
 ```json
 {
-    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/knows/schema.json",
     "nodeLabel": "MyNode",
     ...
 }

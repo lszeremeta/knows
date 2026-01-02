@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/schema.json",
+    "$schema": "https://raw.githubusercontent.com/lszeremeta/knows/main/knows/schema.json",
     "nodeLabel": "User",
     "edgeLabel": "follows",
     "nodeProperties": {

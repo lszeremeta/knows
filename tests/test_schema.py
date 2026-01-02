@@ -12,6 +12,7 @@ from knows.schema import (
     get_computed_node_properties,
     SchemaError,
     TYPE_GENERATORS,
+    TYPE_ALIASES,
     COMPUTED_PROPERTY_TYPES,
 )
 from knows.graph import Graph
@@ -693,3 +694,44 @@ def test_symmetric_property_generator_ignores_symmetric_key():
     # Both should generate same value with same seed
     assert val_with == val_without
     assert 10 <= val_with <= 20
+
+
+# --- Schema Consistency Tests ---
+
+def test_schema_consistency_validation():
+    """Test that TYPE_GENERATORS covers all types in JSON Schema."""
+    from knows.schema import _get_json_schema
+
+    schema = _get_json_schema()
+    schema_types = set(schema['$defs']['simpleType']['enum'])
+
+    # All schema types should have a generator or alias
+    for type_name in schema_types:
+        assert type_name in TYPE_GENERATORS or type_name in TYPE_ALIASES, \
+            f"Type '{type_name}' from JSON Schema has no generator"
+
+
+def test_all_generators_in_schema():
+    """Test that all TYPE_GENERATORS are listed in JSON Schema."""
+    from knows.schema import _get_json_schema
+
+    schema = _get_json_schema()
+    schema_types = set(schema['$defs']['simpleType']['enum'])
+
+    # All generators should be in schema (canonical types)
+    for type_name in TYPE_GENERATORS.keys():
+        assert type_name in schema_types, \
+            f"Generator type '{type_name}' not in JSON Schema"
+
+
+def test_computed_types_consistency():
+    """Test that COMPUTED_PROPERTY_TYPES matches JSON Schema."""
+    from knows.schema import _get_json_schema
+
+    schema = _get_json_schema()
+    schema_computed = set(
+        schema['properties']['computedNodeProperties']['additionalProperties']['enum']
+    )
+
+    assert schema_computed == set(COMPUTED_PROPERTY_TYPES.keys()), \
+        "COMPUTED_PROPERTY_TYPES does not match JSON Schema"
