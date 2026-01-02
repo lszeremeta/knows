@@ -1,7 +1,7 @@
 """GQL-inspired schema support for property graph generation.
 
 This module provides functionality to load and validate JSON schema files
-that define custom node and edge types following GQL (ISO/IEC 39075) conventions.
+that define custom node and edge types. GQL-inspired (ISO/IEC 39075).
 
 Example schema file:
 {

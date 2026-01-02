@@ -125,7 +125,7 @@ class CommandLineInterface:
             help=(
                 "Path to JSON schema file defining custom node/edge types and properties. "
                 "When specified, overrides -np, -ep, and -ap options. "
-                "Schema format follows GQL (ISO/IEC 39075) conventions."
+                "GQL-inspired schema format (ISO/IEC 39075)."
             ),
         )
         parser.add_argument("-d", "--draw", action="store_true",

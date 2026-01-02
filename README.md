@@ -17,8 +17,8 @@ enthusiasts.
 - **Intuitive Command-Line Interface (CLI)**: A user-friendly CLI for streamlined graph generation and visualization.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
-- **Custom Schema Support**: Define custom node/edge types and properties using JSON schema files following GQL (ISO/IEC
-  39075) conventions. Includes [JSON Schema](schema.json) for validation. See [SCHEMA.md](SCHEMA.md) for details.
+- **Custom Schema Support**: Define custom node/edge types and properties using GQL-inspired (ISO/IEC 39075) JSON schema
+  files. Includes [JSON Schema](schema.json) for validation. See [SCHEMA.md](SCHEMA.md) for details.
 - **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected
   output format.
 
@@ -168,7 +168,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`.
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
 - `-S FILE`, `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
-  overrides `-np`, `-ep`, and `-ap` options. Schema format follows GQL (ISO/IEC 39075) conventions.
+  overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format (ISO/IEC 39075).
   See [SCHEMA.md](SCHEMA.md) for details.
 - `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
   may not work in Docker. If you want to generate an image of the graph, use the `svg`, `png`, `jpg`, or `pdf` output

@@ -1,7 +1,7 @@
 # Schema Support in Knows
 
 Knows supports custom graph schemas via JSON files, allowing you to define your own node and edge types with custom
-properties. The schema format follows GQL (ISO/IEC 39075) conventions.
+properties. GQL-inspired schema format (ISO/IEC 39075).
 
 A [JSON Schema](schema.json) is provided for validation and IDE autocompletion. To enable it, add `"$schema"` to your
 schema file:

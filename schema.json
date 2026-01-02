@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://github.com/lszeremeta/knows/schema.json",
     "title": "Knows Graph Schema",
-    "description": "Schema for defining custom node and edge types in Knows property graph generator. Follows GQL (ISO/IEC 39075) conventions.",
+    "description": "Schema for defining custom node and edge types in Knows property graph generator. GQL-inspired (ISO/IEC 39075).",
     "type": "object",
     "properties": {
         "nodeLabel": {
