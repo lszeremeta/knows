@@ -234,18 +234,9 @@ class OutputFormat:
     def _to_json(self) -> str:
         """Converts the graph to JSON format with 'edges' key.
 
-        - NetworkX 3.4+: use node_link_data(..., edges="edges")
-        - NetworkX 3.2-3.3: node_link_data() returns 'links' -> rename to 'edges'
+        Returns:
+            str: The graph in JSON format.
         """
         G = self.graph.graph
-
-        # TODO: Remove this workaround when NetworkX 3.4+ is required (Python 3.10+)
-        # Feature-detect: if 'edges' is a parameter of node_link_data (NX >= 3.4)
-        if "edges" in inspect.signature(nx.node_link_data).parameters:
-            data = nx.node_link_data(G, edges="edges")
-        else:
-            data = nx.node_link_data(G)  # has 'links' by default in NX 3.2-3.3
-            if "links" in data and "edges" not in data:
-                data["edges"] = data.pop("links")
-
+        data = nx.node_link_data(G, edges="edges")
         return json.dumps(data)

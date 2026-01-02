@@ -9,14 +9,19 @@ description = "Powerful and user-friendly property graph generator that creates 
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Łukasz Szeremeta", email = "l.szeremeta.dev+knows@gmail.com" }]
 
 dependencies = [
-    "networkx>=3.2.0",
+    "networkx>=3.4.0",
     "Faker>=36.0.0",
-    "jsonschema>=4.20.0",
+    "jsonschema>=4.22.0",
 ]
+
+[project.optional-dependencies]
+draw = ["matplotlib>=3.10.0", "scipy>=1.14.0"]
+test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
+dev =  ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
 
 keywords = [
     "knows",
@@ -70,7 +75,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -88,11 +92,6 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-
-[project.optional-dependencies]
-draw = ["matplotlib>=3.8.4", "scipy>=1.12.0"]
-test = ["matplotlib>=3.8.4", "scipy>=1.12.0", "pytest>=8.0.0", "flake8>=7.0.0"]
-dev = ["matplotlib>=3.8.4", "scipy>=1.12.0", "pytest>=8.0.0", "flake8>=7.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/lszeremeta/knows"
