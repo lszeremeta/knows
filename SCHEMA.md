@@ -3,7 +3,7 @@
 Knows supports custom graph schemas via JSON files, allowing you to define your own node and edge types with custom
 properties. GQL-inspired schema format (ISO/IEC 39075).
 
-A [JSON Schema](schema.json) is provided for validation and IDE autocompletion. To enable it, add `"$schema"` to your
+A [JSON Schema](https://github.com/lszeremeta/knows/knows/schema.json) is provided for validation and IDE autocompletion. To enable it, add `"$schema"` to your
 schema file:
 
 ```json
@@ -271,31 +271,31 @@ topology.
 
 ## Example Schemas
 
-Ready-to-use example schemas are available in the [`schema-examples/`](schema-examples/) directory:
+Ready-to-use example schemas are available in the [`schema-examples/`](https://github.com/lszeremeta/knows/schema-examples/) directory:
 
 ### Simple (2-3 properties each)
 
 | File | Description |
 |------|-------------|
-| [`simple_friendship_schema.json`](schema-examples/simple_friendship_schema.json) | Person/friendOf - name, age |
-| [`simple_task_schema.json`](schema-examples/simple_task_schema.json) | Task/dependsOn - title, status |
-| [`simple_webpage_schema.json`](schema-examples/simple_webpage_schema.json) | Page/linksTo - url, title |
-| [`simple_message_schema.json`](schema-examples/simple_message_schema.json) | User/messaged - username, email |
+| [`simple_friendship_schema.json`](https://github.com/lszeremeta/knows/schema-examples/simple_friendship_schema.json) | Person/friendOf - name, age |
+| [`simple_task_schema.json`](https://github.com/lszeremeta/knows/schema-examples/simple_task_schema.json) | Task/dependsOn - title, status |
+| [`simple_webpage_schema.json`](https://github.com/lszeremeta/knows/schema-examples/simple_webpage_schema.json) | Page/linksTo - url, title |
+| [`simple_message_schema.json`](https://github.com/lszeremeta/knows/schema-examples/simple_message_schema.json) | User/messaged - username, email |
 
 ### Real-world
 
 | File | Description |
 |------|-------------|
-| [`default_schema.json`](schema-examples/default_schema.json) | Default Knows graph (Person/knows) |
-| [`social_network_schema.json`](schema-examples/social_network_schema.json) | Social media users and followers |
-| [`employee_schema.json`](schema-examples/employee_schema.json) | Employee collaboration network |
-| [`ecommerce_schema.json`](schema-examples/ecommerce_schema.json) | E-commerce product relationships |
-| [`knowledge_graph_schema.json`](schema-examples/knowledge_graph_schema.json) | Knowledge graph with concepts |
-| [`citation_network_schema.json`](schema-examples/citation_network_schema.json) | Academic paper citations |
-| [`transportation_schema.json`](schema-examples/transportation_schema.json) | Transit stations and routes |
-| [`financial_schema.json`](schema-examples/financial_schema.json) | Bank accounts and transactions |
-| [`infrastructure_schema.json`](schema-examples/infrastructure_schema.json) | IT services and dependencies |
-| [`movie_database_schema.json`](schema-examples/movie_database_schema.json) | Actor co-starring relationships |
+| [`default_schema.json`](https://github.com/lszeremeta/knows/schema-examples/default_schema.json) | Default Knows graph (Person/knows) |
+| [`social_network_schema.json`](https://github.com/lszeremeta/knows/schema-examples/social_network_schema.json) | Social media users and followers |
+| [`employee_schema.json`](https://github.com/lszeremeta/knows/schema-examples/employee_schema.json) | Employee collaboration network |
+| [`ecommerce_schema.json`](https://github.com/lszeremeta/knows/schema-examples/ecommerce_schema.json) | E-commerce product relationships |
+| [`knowledge_graph_schema.json`](https://github.com/lszeremeta/knows/schema-examples/knowledge_graph_schema.json) | Knowledge graph with concepts |
+| [`citation_network_schema.json`](https://github.com/lszeremeta/knows/schema-examples/citation_network_schema.json) | Academic paper citations |
+| [`transportation_schema.json`](https://github.com/lszeremeta/knows/schema-examples/transportation_schema.json) | Transit stations and routes |
+| [`financial_schema.json`](https://github.com/lszeremeta/knows/schema-examples/financial_schema.json) | Bank accounts and transactions |
+| [`infrastructure_schema.json`](https://github.com/lszeremeta/knows/schema-examples/infrastructure_schema.json) | IT services and dependencies |
+| [`movie_database_schema.json`](https://github.com/lszeremeta/knows/schema-examples/movie_database_schema.json) | Actor co-starring relationships |
 
 Use them directly or as templates for your own schemas:
 
