@@ -18,9 +18,9 @@ enthusiasts.
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
 - **Custom Schema Support**: Define custom node/edge types and properties using GQL-inspired (ISO/IEC 39075) JSON schema
-  files. Includes [JSON Schema](knows/schema.json) for validation. Schemas support many data types (String, Int, Float, Date,
+  files. Includes [JSON Schema](https://github.com/lszeremeta/knows/knows/schema.json) for validation. Schemas support many data types (String, Int, Float, Date,
   enums, and more), symmetric edge properties (for mutual relationships), computed node properties (like degree), and
-  type constraints. See [SCHEMA.md](SCHEMA.md) for full documentation.
+  type constraints. See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full documentation.
 - **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected
   output format.
 
@@ -171,7 +171,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
 - `-S FILE`, `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
   overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format (ISO/IEC 39075).
-  See [SCHEMA.md](SCHEMA.md) for details.
+  See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
 - `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
   may not work in Docker. If you want to generate an image of the graph, use the `svg`, `png`, `jpg`, or `pdf` output
   format and save it to a file.
@@ -273,7 +273,7 @@ remain unchanged.
    knows -n 10 -e 15 -S schema-examples/employee_schema.json -f cypher > employees.cypher
    ```
 
-See [SCHEMA.md](SCHEMA.md) for full schema documentation and more examples.
+See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full schema documentation and more examples.
 
 ## Contribute to Knows 👥
 
