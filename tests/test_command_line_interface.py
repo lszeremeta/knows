@@ -167,3 +167,45 @@ def test_cli_version_option(monkeypatch, capsys):
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
     assert captured.out.strip() == f"knows {__version__}"
+
+
+def test_cli_default_limit(monkeypatch):
+    """Ensure default limit is 50."""
+    monkeypatch.setattr('sys.argv', ['prog'])
+    cli = CommandLineInterface()
+    assert cli.args.limit == 50
+
+
+def test_cli_custom_limit(monkeypatch):
+    """Ensure custom limit is parsed."""
+    monkeypatch.setattr('sys.argv', ['prog', '--limit', '100'])
+    cli = CommandLineInterface()
+    assert cli.args.limit == 100
+
+
+def test_cli_limit_short_option(monkeypatch):
+    """Ensure short limit option is parsed."""
+    monkeypatch.setattr('sys.argv', ['prog', '-l', '75'])
+    cli = CommandLineInterface()
+    assert cli.args.limit == 75
+
+
+def test_cli_no_limit_option(monkeypatch):
+    """Ensure --no-limit sets limit to 0."""
+    monkeypatch.setattr('sys.argv', ['prog', '--no-limit'])
+    cli = CommandLineInterface()
+    assert cli.args.limit == 0
+
+
+def test_cli_hide_info_option(monkeypatch):
+    """Ensure --hide-info sets show_info to False."""
+    monkeypatch.setattr('sys.argv', ['prog', '--hide-info'])
+    cli = CommandLineInterface()
+    assert cli.args.show_info is False
+
+
+def test_cli_default_show_info(monkeypatch):
+    """Ensure show_info defaults to True."""
+    monkeypatch.setattr('sys.argv', ['prog'])
+    cli = CommandLineInterface()
+    assert cli.args.show_info is True

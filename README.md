@@ -3,9 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows)
 
 Knows is a powerful and user-friendly tool for generating property graphs. These graphs are crucial in many fields.
-Knows supports
-multiple output formats and basic visualization capabilities, making it a go-to tool for researchers, educators and data
-enthusiasts.
+Knows supports multiple output formats, graphs schema and basic visualization capabilities, making it a go-to tool for researchers, educators and data enthusiasts.
 
 ## Key Features 🚀
 
@@ -138,10 +136,11 @@ The `-d`/`--draw` option requires Tkinter.
 ### Basic Usage
 
 ```shell
-knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
+usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
              [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+             [--schema FILE]
              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,preferredContactMethod,friendCount} ...]]
-             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [--schema FILE] [-d]
+             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d] [-l N] [--no-limit] [--hide-info]
              [output]
 ```
 
@@ -163,6 +162,9 @@ knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
 - `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
 Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
 visualization.
+- `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
+  overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
+  See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
 Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
 `postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
@@ -170,12 +172,12 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`. Ignored when `--schema` is used.
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
-- `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
-  overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
-  See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
-- `-d`, `--draw`: Show simple image of the graph. Requires Tkinter. This option
-  may not work in Docker. If you want to generate an image of the graph, use the `svg`, `png`, `jpg`, or `pdf` output
-  format and save it to a file.
+- `-d`, `--draw`: Show interactive graph window. Requires Tkinter. May not work in Docker.
+
+### Graphics output options (svg, png, jpg, pdf, -d)
+- `-l N`, `--limit N`: Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.
+- `--no-limit`: Show full graph without node limit. May be slow for large graphs.
+- `--hide-info`: Hide node count info (e.g., `50/200 nodes`) from output.
 
 ### Practical Examples 🌟
 
@@ -275,6 +277,22 @@ remain unchanged.
    ```
 
 See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full schema documentation and more examples.
+
+15. Visualize a large graph with custom node limit:
+   ```shell
+   knows -n 500 -e 300 -f svg -l 100 > graph.svg
+   ```
+   This limits the visualization to 100 nodes (default is 50), centered on the most connected nodes.
+
+16. Visualize the full graph without node limit:
+   ```shell
+   knows -n 200 -e 150 -f png --no-limit > graph.png
+   ```
+
+17. Create visualization without node count info:
+   ```shell
+   knows -n 300 -e 200 -f svg --hide-info > graph.svg
+   ```
 
 ## Contribute to Knows 👥
 

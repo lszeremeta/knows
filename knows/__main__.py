@@ -28,7 +28,7 @@ def main():
                       schema=schema)
         graph.generate()
 
-        output = OutputFormat(graph)
+        output = OutputFormat(graph, viz_limit=cli.args.limit, show_info=cli.args.show_info)
         formatted_output = output.to_format(cli.args.format)
         binary_formats = {'png', 'jpg', 'pdf'}
         if cli.args.output:
@@ -60,7 +60,13 @@ def main():
 
         if cli.args.draw:
             try:
-                drawer = GraphDrawer(graph.graph)
+                drawer = GraphDrawer(graph.graph, max_nodes=cli.args.limit, show_info=cli.args.show_info)
+                if drawer.was_truncated:
+                    print(
+                        f"Note: Displaying {len(drawer.graph)}/{drawer.original_node_count} nodes "
+                        f"(use --no-limit to show all)",
+                        file=sys.stderr
+                    )
                 drawer.configure_and_draw()
             except RuntimeError as e:
                 print(f"Error occurred: {e}", file=sys.stderr)

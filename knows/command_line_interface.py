@@ -24,7 +24,7 @@ class CommandLineInterface:
             description=(
                 "Knows is a powerful and user-friendly property graph generation that creates graphs "
                 "with specified node and edge numbers, supporting multiple "
-                "output formats and visualization."
+                "output formats, graph schema and visualization."
             ),
             prog="knows",
             epilog=(
@@ -88,6 +88,18 @@ class CommandLineInterface:
             help="Format to output the graph. Default: yarspg. The svg, png, jpg and pdf formats are for simple graph visualization.",
         )
         parser.add_argument(
+            "--schema",
+            type=str,
+            default=None,
+            metavar="FILE",
+            help=(
+                "Path to JSON schema file defining custom node/edge types and properties. "
+                "When specified, overrides -np, -ep, and -ap options. "
+                "GQL-inspired schema format (ISO/IEC 39075). "
+                "See https://github.com/lszeremeta/knows/SCHEMA.md for details."
+            ),
+        )
+        parser.add_argument(
             "-np",
             "--node-props",
             nargs='*',
@@ -118,19 +130,31 @@ class CommandLineInterface:
             help="Use all available node and edge properties. Ignored when --schema is used.",
         )
         parser.add_argument(
-            "--schema",
-            type=str,
-            default=None,
-            metavar="FILE",
-            help=(
-                "Path to JSON schema file defining custom node/edge types and properties. "
-                "When specified, overrides -np, -ep, and -ap options. "
-                "GQL-inspired schema format (ISO/IEC 39075). "
-                "See https://github.com/lszeremeta/knows/SCHEMA.md for details."
-            ),
+            "-d", "--draw",
+            action="store_true",
+            help="Show interactive graph window. Requires Tkinter. May not work in Docker.",
         )
-        parser.add_argument("-d", "--draw", action="store_true",
-                            help="Show simple image of the graph (default is no image). Requires Tkinter. This option may not work in the Docker. If you want to generate an image of the graph, use the svg, png, jpg, or pdf output format and save it to a file.")
+        # Graphics output options (svg, png, jpg, pdf, --draw)
+        gfx_group = parser.add_argument_group('Graphics output options (svg, png, jpg, pdf, -d)')
+        gfx_group.add_argument(
+            "-l",
+            "--limit",
+            type=int,
+            default=50,
+            metavar="N",
+            help="Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.",
+        )
+        gfx_group.add_argument(
+            "--no-limit",
+            action="store_true",
+            help="Show full graph without node limit. May be slow for large graphs.",
+        )
+        gfx_group.add_argument(
+            "--hide-info",
+            action="store_true",
+            help="Hide node count info (e.g., '50/200 nodes') from output.",
+        )
+
         parser.add_argument(
             "output",
             nargs="?",
@@ -144,6 +168,13 @@ class CommandLineInterface:
         if args.all_props:
             args.node_props = NODE_PROPERTIES
             args.edge_props = EDGE_PROPERTIES
+
+        # Handle --no-limit flag
+        if args.no_limit:
+            args.limit = 0
+
+        # Derive show_info from hide_info
+        args.show_info = not args.hide_info
 
         # Validate schema file exists if specified
         if args.schema:

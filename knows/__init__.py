@@ -2,7 +2,7 @@
 
 """Knows
 
-Knows is powerful and user-friendly property graph generator that creates graphs with specified node and edge numbers, supporting multiple output formats and visualization
+Knows is powerful and user-friendly property graph generator that creates graphs with specified node and edge numbers, supporting multiple output formats, graph schema and visualization
 """
 
 __author__ = 'Łukasz Szeremeta'

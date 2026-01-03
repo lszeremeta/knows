@@ -5,7 +5,7 @@ import json
 
 import networkx as nx
 
-from .graph_drawer import GraphDrawer
+from .graph_drawer import GraphDrawer, DEFAULT_VIZ_LIMIT
 
 
 class OutputFormat:
@@ -13,15 +13,21 @@ class OutputFormat:
 
     Attributes:
         graph (Graph): An instance of the Graph class.
+        viz_limit (int): Maximum nodes to display in visual outputs.
+        show_info (bool): Whether to show node count info on visualizations.
     """
 
-    def __init__(self, graph):
+    def __init__(self, graph, viz_limit: int = DEFAULT_VIZ_LIMIT, show_info: bool = True):
         """Inits OutputFormat with a graph.
 
         Args:
             graph (Graph): An instance of the Graph class.
+            viz_limit (int): Maximum nodes for visual formats. Set to 0 to disable.
+            show_info (bool): Whether to show node count info on visualizations.
         """
         self.graph = graph
+        self.viz_limit = viz_limit
+        self.show_info = show_info
 
     def to_format(self, format_type: str) -> str:
         """Converts the graph to a specified format.
@@ -159,7 +165,7 @@ class OutputFormat:
         Returns:
             str: The graph in SVG format.
         """
-        drawer = GraphDrawer(self.graph.graph)
+        drawer = GraphDrawer(self.graph.graph, max_nodes=self.viz_limit, show_info=self.show_info)
         with io.BytesIO() as buffer:
             drawer._draw_to_buffer(buffer, 'svg')
             return buffer.getvalue().decode('utf-8')
@@ -170,7 +176,7 @@ class OutputFormat:
         Returns:
             bytes: The graph image in PNG format.
         """
-        drawer = GraphDrawer(self.graph.graph)
+        drawer = GraphDrawer(self.graph.graph, max_nodes=self.viz_limit, show_info=self.show_info)
         return drawer.to_png()
 
     def _to_jpg(self) -> bytes:
@@ -179,7 +185,7 @@ class OutputFormat:
         Returns:
             bytes: The graph image in JPG format.
         """
-        drawer = GraphDrawer(self.graph.graph)
+        drawer = GraphDrawer(self.graph.graph, max_nodes=self.viz_limit, show_info=self.show_info)
         return drawer.to_jpg()
 
     def _to_pdf(self) -> bytes:
@@ -188,7 +194,7 @@ class OutputFormat:
         Returns:
             bytes: The graph in PDF format.
         """
-        drawer = GraphDrawer(self.graph.graph)
+        drawer = GraphDrawer(self.graph.graph, max_nodes=self.viz_limit, show_info=self.show_info)
         return drawer.to_pdf()
 
     def _to_gexf(self) -> str:
