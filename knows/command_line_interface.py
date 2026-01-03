@@ -147,7 +147,7 @@ class CommandLineInterface:
         gfx_group.add_argument(
             "--no-limit",
             action="store_true",
-            help="Show full graph without node limit. May be slow for large graphs.",
+            help="Show full graph without node limit.",
         )
         gfx_group.add_argument(
             "--hide-info",

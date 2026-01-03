@@ -176,7 +176,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 
 ### Graphics output options (svg, png, jpg, pdf, -d)
 - `-l N`, `--limit N`: Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.
-- `--no-limit`: Show full graph without node limit. May be slow for large graphs.
+- `--no-limit`: Show full graph without node limit.
 - `--hide-info`: Hide node count info (e.g., `50/200 nodes`) from output.
 
 ### Practical Examples 🌟
