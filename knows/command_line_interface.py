@@ -96,7 +96,7 @@ class CommandLineInterface:
                 "Path to JSON schema file defining custom node/edge types and properties. "
                 "When specified, overrides -np, -ep, and -ap options. "
                 "GQL-inspired schema format (ISO/IEC 39075). "
-                "See https://github.com/lszeremeta/knows/SCHEMA.md for details."
+                "See https://github.com/lszeremeta/knows/blob/main/SCHEMA.md for details."
             ),
         )
         parser.add_argument(

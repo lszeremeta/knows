@@ -18,7 +18,7 @@ Knows supports multiple output formats, graphs schema and basic visualization ca
 - **Custom Schema Support**: Define custom node/edge types and properties using GQL-inspired (ISO/IEC 39075) JSON schema
   files. Includes [JSON Schema](https://github.com/lszeremeta/knows/knows/schema.json) for validation. Schemas support many data types (String, Int, Float, Date,
   enums, and more), symmetric edge properties (for mutual relationships), computed node properties (like degree), and
-  type constraints. See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full documentation.
+  type constraints. See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full documentation.
 - **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected
   output format.
 
@@ -50,7 +50,7 @@ Build-in graph structure:
 - If edges connect the same nodes in both directions, the paired edges share `lastMeetingCity`, `lastMeetingDate`, and
   `meetingCount` values.
 
-You can define custom graph structures using schema files. See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details and examples.
+You can define custom graph structures using schema files. See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for details and examples.
 
 ## Installation 🛠️
 
@@ -178,7 +178,7 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
   visualization.
 - `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
   overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
-  See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
+  See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for details.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
   Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
   `postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
@@ -297,7 +297,7 @@ knows -n 10 -e 15 -S schema-examples/employee_schema.json
 knows -n 10 -e 15 -S schema-examples/employee_schema.json -f cypher > employees.cypher
 ```
 
-See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full schema documentation and more examples.
+See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full schema documentation and more examples.
 
 15. Visualize a large graph with custom node limit:
 
