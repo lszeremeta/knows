@@ -27,6 +27,8 @@ Knows supports multiple output formats, graphs schema and basic visualization ca
 
 ## Graph Structure
 
+Build-in graph structure:
+
 - Generates graphs with specified or random nodes and edges.
 - Creates directed graphs.
 - Nodes are labeled `Person` with unique IDs (`N1, N2, N3, ..., Nn`).
@@ -34,19 +36,21 @@ Knows supports multiple output formats, graphs schema and basic visualization ca
 - Edges are labeled `knows` and include `strength` [1..100] and `lastMeetingDate` [1955-01-01..2025-06-28] properties by
   default.
 - Additional node properties:
-    - `favoriteColor`
-    - `company`
-    - `job`
-    - `phoneNumber`
-    - `postalAddress`
-    - `friendCount` (actual node degree - number of unique connections)
-    - `preferredContactMethod` [`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`]
+  - `favoriteColor`
+  - `company`
+  - `job`
+  - `phoneNumber`
+  - `postalAddress`
+  - `friendCount` (actual node degree - number of unique connections)
+  - `preferredContactMethod` [`inPerson`, `email`, `postalMail`, `phone`, `textMessage`, `videoCall`, `noPreference`]
 - Additional edge properties:
-    - `lastMeetingCity`
-    - `meetingCount` [1..10000]
+  - `lastMeetingCity`
+  - `meetingCount` [1..10000]
 - Edges have random nodes, avoiding cycles.
 - If edges connect the same nodes in both directions, the paired edges share `lastMeetingCity`, `lastMeetingDate`, and
   `meetingCount` values.
+
+You can define custom graph structures using schema files. See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details and examples.
 
 ## Installation 🛠️
 
@@ -55,9 +59,11 @@ You can install knows via PyPI, Docker or run it from the source code.
 ### Install via PyPI
 
 1. **Installation**:
+
    ```shell
    pip install knows[draw]
    ```
+
    The `draw` installs a `matplotlib` and `scipy` libraries for graph visualization. You can omit the `[draw]` if you
    don't need visualization and `svg` output generation.
 
@@ -71,6 +77,7 @@ You can install knows via PyPI, Docker or run it from the source code.
 #### From Docker Hub
 
 1. **Pull Image**:
+
    ```shell
    docker pull lszeremeta/knows
    ```
@@ -83,6 +90,7 @@ You can install knows via PyPI, Docker or run it from the source code.
 #### Building from Source
 
 1. **Build Image**:
+
    ```shell
    docker build -t knows .
    ```
@@ -95,12 +103,14 @@ You can install knows via PyPI, Docker or run it from the source code.
 ### Python from Source
 
 1. **Clone Repository**:
+
    ```shell
    git clone git@github.com:lszeremeta/knows.git
    cd knows
    ```
 
 2. **Install Requirements**:
+
    ```shell
    pip install .[draw]
    ```
@@ -115,17 +125,21 @@ You can install knows via PyPI, Docker or run it from the source code.
 The `-d`/`--draw` option requires Tkinter.
 
 - **Ubuntu**:
+
   ```shell
   sudo apt update
   sudo apt install python3-tk
   ```
+
   See [Installing Tkinter on Ubuntu](https://www.pythonguis.com/installation/install-tkinter-linux/) for details.
 
 - **macOS (Homebrew)**:
+
   ```shell
   brew install python3
   brew install python-tk
   ```
+
   See [Installing Tkinter on macOS](https://www.pythonguis.com/installation/install-tkinter-mac/) for details.
 
 - **Windows**:
@@ -145,7 +159,7 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
 ```
 
 > Available options may vary depending on the version. To display all available options with their descriptions use
-`knows -h`.
+> `knows -h`.
 
 ### Positional arguments
 
@@ -160,14 +174,14 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
   output formats).
 - `-v`, `--version`: Show program version and exit.
 - `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
-Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
-visualization.
+  Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
+  visualization.
 - `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
   overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
   See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for details.
 - `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
-Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
-`postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
+  Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
+  `postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
 - `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`. Ignored when `--schema` is used.
@@ -175,6 +189,7 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
 - `-d`, `--draw`: Show interactive graph window. Requires Tkinter. May not work in Docker.
 
 ### Graphics output options (svg, png, jpg, pdf, -d)
+
 - `-l N`, `--limit N`: Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.
 - `--no-limit`: Show full graph without node limit.
 - `--hide-info`: Hide node count info (e.g., `50/200 nodes`) from output.
@@ -246,53 +261,63 @@ Space-separated node properties. Available: `firstName`, `lastName`, `company`, 
    knows -f json graph.json
    ```
 10. Create a graph with custom properties (20 nodes, 10 edges) and show it:
-   ```shell
-   knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
-   ```
+
+```shell
+knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
+```
+
 11. Create a graph with all possible properties in YARS-PG format and save it to file:
-   ```shell
-   knows -ap > graph.yarspg
-   # or
-   knows -ap graph.yarspg
-   ```
+
+```shell
+knows -ap > graph.yarspg
+# or
+knows -ap graph.yarspg
+```
+
 12. Generate a reproducible graph in CSV by setting a seed:
-   ```shell
-   knows -n 3 -e 2 -s 43 -f csv
-   ```
+
+```shell
+knows -n 3 -e 2 -s 43 -f csv
+```
 
 Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
 remain unchanged.
 
 13. Generate the same graph as above but in YARS-PG format:
 
-   ```shell
-   knows -n 3 -e 2 -s 43
-   ```
+```shell
+knows -n 3 -e 2 -s 43
+```
 
 14. Generate a graph using a custom schema file:
-   ```shell
-   knows -n 10 -e 15 -S schema-examples/employee_schema.json
-   # or
-   knows -n 10 -e 15 -S schema-examples/employee_schema.json -f cypher > employees.cypher
-   ```
+
+```shell
+knows -n 10 -e 15 -S schema-examples/employee_schema.json
+# or
+knows -n 10 -e 15 -S schema-examples/employee_schema.json -f cypher > employees.cypher
+```
 
 See [SCHEMA.md](https://github.com/lszeremeta/knows/SCHEMA.md) for full schema documentation and more examples.
 
 15. Visualize a large graph with custom node limit:
-   ```shell
-   knows -n 500 -e 300 -f svg -l 100 > graph.svg
-   ```
-   This limits the visualization to 100 nodes (default is 50), centered on the most connected nodes.
+
+```shell
+knows -n 500 -e 300 -f svg -l 100 > graph.svg
+```
+
+This limits the visualization to 100 nodes (default is 50), centered on the most connected nodes.
 
 16. Visualize the full graph without node limit:
-   ```shell
-   knows -n 200 -e 150 -f png --no-limit > graph.png
-   ```
+
+```shell
+knows -n 200 -e 150 -f png --no-limit > graph.png
+```
 
 17. Create visualization without node count info:
-   ```shell
-   knows -n 300 -e 200 -f svg --hide-info > graph.svg
-   ```
+
+```shell
+knows -n 300 -e 200 -f svg --hide-info > graph.svg
+```
 
 ## Contribute to Knows 👥
 
