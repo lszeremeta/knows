@@ -86,7 +86,7 @@ Create a schema file (e.g., `my_schema.json`):
 Then generate a graph:
 
 ```shell
-knows -n 20 -e 30 -S my_schema.json
+knows -n 20 -e 30 --schema my_schema.json
 ```
 
 ## Schema Structure
@@ -300,7 +300,7 @@ Ready-to-use example schemas are available in the [`schema-examples/`](https://g
 Use them directly or as templates for your own schemas:
 
 ```shell
-knows -n 50 -e 100 -S schema-examples/social_network_schema.json
+knows -n 50 -e 100 --schema schema-examples/social_network_schema.json
 ```
 
 ## Usage Examples
@@ -308,46 +308,46 @@ knows -n 50 -e 100 -S schema-examples/social_network_schema.json
 ### Generate graph with custom schema
 
 ```shell
-knows -S my_schema.json
+knows --schema my_schema.json
 ```
 
 ### Specify node and edge count
 
 ```shell
-knows -n 100 -e 200 -S my_schema.json
+knows -n 100 -e 200 --schema my_schema.json
 ```
 
 ### Export to different formats
 
 ```shell
 # GraphML
-knows -n 50 -e 75 -S my_schema.json -f graphml > graph.graphml
+knows -n 50 -e 75 --schema my_schema.json -f graphml > graph.graphml
 
 # Cypher (for Neo4j)
-knows -n 50 -e 75 -S my_schema.json -f cypher > graph.cypher
+knows -n 50 -e 75 --schema my_schema.json -f cypher > graph.cypher
 
 # CSV
-knows -n 50 -e 75 -S my_schema.json -f csv graph.csv
+knows -n 50 -e 75 --schema my_schema.json -f csv graph.csv
 
 # JSON
-knows -n 50 -e 75 -S my_schema.json -f json > graph.json
+knows -n 50 -e 75 --schema my_schema.json -f json > graph.json
 ```
 
 ### With reproducible seed
 
 ```shell
-knows -n 20 -e 30 -S my_schema.json -s 42
+knows -n 20 -e 30 --schema my_schema.json -s 42
 ```
 
 ### Using Docker
 
 ```shell
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -S /data/my_schema.json -n 50 -e 75
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75
 ```
 
 ## Notes
 
-- When using `-S`/`--schema`, the `-np`, `-ep`, and `-ap` options are ignored
+- When using `--schema`, the `-np`, `-ep`, and `-ap` options are ignored
 - Schema files must be valid JSON with `.json` extension
 - All property definitions are validated before graph generation
 - Invalid schemas will produce clear error messages

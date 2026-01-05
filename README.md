@@ -100,81 +100,7 @@ You can install knows via PyPI, Docker or run it from the source code.
    docker run --rm knows [options]
    ```
 
-#### Docker Examples
-
-Here are common Docker usage patterns:
-
-```shell
-# Display help
-docker run --rm lszeremeta/knows --help
-
-# Generate a random graph and display in console
-docker run --rm lszeremeta/knows
-
-# Generate a graph with specific size
-docker run --rm lszeremeta/knows -n 50 -e 30
-
-# Save output to a file (mount current directory)
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 100 -e 70 -f graphml /data/graph.graphml
-
-# Generate CSV files (creates graph_nodes.csv and graph_edges.csv)
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 30 -f csv /data/graph.csv
-
-# Generate with all properties
-docker run --rm lszeremeta/knows -n 20 -e 15 -ap
-
-# Generate reproducible graph with seed
-docker run --rm lszeremeta/knows -n 30 -e 20 -s 42
-
-# Generate PNG visualization
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 30 -e 25 -f png /data/graph.png
-
-# Generate SVG with custom node limit for large graphs
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg -l 100 /data/graph.svg
-```
-
-#### Docker with Custom Schemas
-
-The Docker image includes built-in example schemas in `/app/schema-examples/`. You can use them directly:
-
-```shell
-# Use built-in example schemas (no mounting required)
-docker run --rm lszeremeta/knows --schema /app/schema-examples/social_network_schema.json -n 50 -e 100
-docker run --rm lszeremeta/knows --schema /app/schema-examples/employee_schema.json -n 30 -e 50 -f cypher
-
-# Save output to a file using built-in schema
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /app/schema-examples/ecommerce_schema.json -n 100 -e 150 -f graphml /data/graph.graphml
-```
-
-To use your own custom schema files, mount them into the container:
-
-```shell
-# Basic schema usage
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75
-
-# Save schema-based graph to GraphML
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 100 -e 150 -f graphml /data/graph.graphml
-
-# Generate Cypher for Neo4j import
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 100 -e 200 -f cypher /data/graph.cypher
-
-# Generate CSV files with custom schema
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75 -f csv /data/graph.csv
-
-# Generate JSON with custom schema
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 30 -e 40 -f json /data/graph.json
-
-# Reproducible schema-based graph
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 20 -e 30 -s 42 /data/graph.yarspg
-
-# Generate PNG visualization with schema
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 40 -e 60 -f png /data/graph.png
-
-# Generate SVG with custom node limit
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 200 -e 300 -f svg -l 80 /data/graph.svg
-```
-
-> **Note:** On Windows PowerShell, replace `$(pwd)` with `${PWD}`. On Windows Command Prompt, use `%cd%`.
+See Docker examples in Practical Examples section.
 
 ### Python from Source
 
@@ -305,12 +231,20 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
    knows -n 50 -e 20 -f cypher > graph.cypher
    # or
    knows -n 50 -e 20 -f cypher graph.cypher
+   # or
+   docker run --rm lszeremeta/knows -n 50 -e 20 -f cypher > graph.cypher
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 20 -f cypher /data/graph.cypher
    ```
 5. Create a 100-node, 50-edge graph in YARS-PG format:
    ```shell
    knows -n 100 -e 50 > graph.yarspg
    # or
    knows -n 100 -e 50 graph.yarspg
+   # or
+   docker run --rm lszeremeta/knows -n 100 -e 50 > graph.yarspg
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 100 -e 50 /data/graph.yarspg
    ```
 6. Create, save, and visualize a 100-node, 50-edge graph in SVG:
    ```shell
@@ -323,23 +257,37 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
    knows -n 70 -e 50 -f svg > graph.svg
    # or
    knows -n 70 -e 50 -f svg graph.svg
+   # or
+   docker run --rm lszeremeta/knows -n 70 -e 50 -f svg > graph.svg
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 70 -e 50 -f svg /data/graph.svg
    ```
 8. Create, save a 10-node, 5-edge graph in PNG:
    ```shell
    knows -n 10 -e 5 -f png > graph.png
    # or
    knows -n 10 -e 5 -f png graph.png
+   # or
+   docker run --rm lszeremeta/knows -n 10 -e 5 -f png > graph.png
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 10 -e 5 -f png /data/graph.png
    ```
 9. Create a graph in JSON format:
    ```shell
    knows -f json > graph.json
    # or
    knows -f json graph.json
+   # or
+   docker run --rm lszeremeta/knows -f json > graph.json
+   # or
+   docker run --rm -v "$(pwd)":/data lszeremeta/knows -f json /data/graph.json
    ```
 10. Create a graph with custom properties (20 nodes, 10 edges) and show it:
 
 ```shell
 knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
+# or
+docker run --rm lszeremeta/knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
 ```
 
 11. Create a graph with all possible properties in YARS-PG format and save it to file:
@@ -348,12 +296,18 @@ knows -n 20 -e 10 -np firstName favoriteColor job -ep lastMeetingCity
 knows -ap > graph.yarspg
 # or
 knows -ap graph.yarspg
+# or
+docker run --rm lszeremeta/knows -ap > graph.yarspg
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -ap /data/graph.yarspg
 ```
 
 12. Generate a reproducible graph in CSV by setting a seed:
 
 ```shell
 knows -n 3 -e 2 -s 43 -f csv
+# or
+docker run --rm lszeremeta/knows -n 3 -e 2 -s 43 -f csv
 ```
 
 Running the command again with the same seed will produce the identical graph, provided the environment and dependencies
@@ -363,6 +317,8 @@ remain unchanged.
 
 ```shell
 knows -n 3 -e 2 -s 43
+# or
+docker run --rm lszeremeta/knows -n 3 -e 2 -s 43
 ```
 
 14. Generate a graph using a custom schema file:
@@ -382,6 +338,10 @@ See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for ful
 
 ```shell
 knows -n 500 -e 300 -f svg -l 100 > graph.svg
+# or
+docker run --rm lszeremeta/knows -n 500 -e 300 -f svg -l 100 > graph.svg
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg -l 100 /data/graph.svg
 ```
 
 This limits the visualization to 100 nodes (default is 50), centered on the most connected nodes.
@@ -390,13 +350,23 @@ This limits the visualization to 100 nodes (default is 50), centered on the most
 
 ```shell
 knows -n 200 -e 150 -f png --no-limit > graph.png
+# or
+docker run --rm lszeremeta/knows -n 200 -e 150 -f png --no-limit > graph.png
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 200 -e 150 -f png --no-limit /data/graph.png
 ```
 
 17. Create visualization without node count info:
 
 ```shell
 knows -n 300 -e 200 -f svg --hide-info > graph.svg
+# or
+docker run --rm lszeremeta/knows -n 300 -e 200 -f svg --hide-info > graph.svg
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 300 -e 200 -f svg --hide-info /data/graph.svg
 ```
+
+> **Note:** On Windows PowerShell, replace `$(pwd)` with `${PWD}`. On Windows Command Prompt, use `%cd%`.
 
 ## Contribute to Knows 👥
 
