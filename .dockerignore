@@ -4,3 +4,4 @@
 !LICENSE
 !knows/*.py
 !knows/schema.json
+!schema-examples/*.json

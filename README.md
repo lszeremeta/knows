@@ -135,7 +135,18 @@ docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg -l 100 /
 
 #### Docker with Custom Schemas
 
-To use custom schema files with Docker, mount your schema file into the container:
+The Docker image includes built-in example schemas in `/app/schema-examples/`. You can use them directly:
+
+```shell
+# Use built-in example schemas (no mounting required)
+docker run --rm lszeremeta/knows --schema /app/schema-examples/social_network_schema.json -n 50 -e 100
+docker run --rm lszeremeta/knows --schema /app/schema-examples/employee_schema.json -n 30 -e 50 -f cypher
+
+# Save output to a file using built-in schema
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /app/schema-examples/ecommerce_schema.json -n 100 -e 150 -f graphml /data/graph.graphml
+```
+
+To use your own custom schema files, mount them into the container:
 
 ```shell
 # Basic schema usage
@@ -161,10 +172,6 @@ docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json
 
 # Generate SVG with custom node limit
 docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 200 -e 300 -f svg -l 80 /data/graph.svg
-
-# Use built-in example schemas (if you cloned the repository)
-docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/social_network_schema.json -n 50 -e 100
-docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/employee_schema.json -n 30 -e 50 -f cypher
 ```
 
 > **Note:** On Windows PowerShell, replace `$(pwd)` with `${PWD}`. On Windows Command Prompt, use `%cd%`.
@@ -364,9 +371,9 @@ knows -n 3 -e 2 -s 43
 knows -n 10 -e 15 --schema schema-examples/employee_schema.json
 # or
 knows -n 10 -e 15 --schema schema-examples/employee_schema.json -f cypher > employees.cypher
-# or with Docker
-docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/employee_schema.json -n 10 -e 15
-docker run --rm -v "$(pwd)/schema-examples":/schemas -v "$(pwd)":/data lszeremeta/knows --schema /schemas/employee_schema.json -n 10 -e 15 -f cypher /data/employees.cypher
+# or with Docker (using built-in example schemas)
+docker run --rm lszeremeta/knows --schema /app/schema-examples/employee_schema.json -n 10 -e 15
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /app/schema-examples/employee_schema.json -n 10 -e 15 -f cypher /data/employees.cypher
 ```
 
 See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full schema documentation and more examples.
