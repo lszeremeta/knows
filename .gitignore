@@ -7,7 +7,7 @@
 *.gexf
 *.gml
 *.json
-!schema.json
+!knows/schema.json
 !schema-examples/*.json
 *.png
 !logo/*.png
