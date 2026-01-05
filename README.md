@@ -100,6 +100,75 @@ You can install knows via PyPI, Docker or run it from the source code.
    docker run --rm knows [options]
    ```
 
+#### Docker Examples
+
+Here are common Docker usage patterns:
+
+```shell
+# Display help
+docker run --rm lszeremeta/knows --help
+
+# Generate a random graph and display in console
+docker run --rm lszeremeta/knows
+
+# Generate a graph with specific size
+docker run --rm lszeremeta/knows -n 50 -e 30
+
+# Save output to a file (mount current directory)
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 100 -e 70 -f graphml /data/graph.graphml
+
+# Generate CSV files (creates graph_nodes.csv and graph_edges.csv)
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 30 -f csv /data/graph.csv
+
+# Generate with all properties
+docker run --rm lszeremeta/knows -n 20 -e 15 -ap
+
+# Generate reproducible graph with seed
+docker run --rm lszeremeta/knows -n 30 -e 20 -s 42
+
+# Generate PNG visualization
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 30 -e 25 -f png /data/graph.png
+
+# Generate SVG with custom node limit for large graphs
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg -l 100 /data/graph.svg
+```
+
+#### Docker with Custom Schemas
+
+To use custom schema files with Docker, mount your schema file into the container:
+
+```shell
+# Basic schema usage
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75
+
+# Save schema-based graph to GraphML
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 100 -e 150 -f graphml /data/graph.graphml
+
+# Generate Cypher for Neo4j import
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 100 -e 200 -f cypher /data/graph.cypher
+
+# Generate CSV files with custom schema
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75 -f csv /data/graph.csv
+
+# Generate JSON with custom schema
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 30 -e 40 -f json /data/graph.json
+
+# Reproducible schema-based graph
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 20 -e 30 -s 42 /data/graph.yarspg
+
+# Generate PNG visualization with schema
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 40 -e 60 -f png /data/graph.png
+
+# Generate SVG with custom node limit
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 200 -e 300 -f svg -l 80 /data/graph.svg
+
+# Use built-in example schemas (if you cloned the repository)
+docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/social_network_schema.json -n 50 -e 100
+docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/employee_schema.json -n 30 -e 50 -f cypher
+```
+
+> **Note:** On Windows PowerShell, replace `$(pwd)` with `${PWD}`. On Windows Command Prompt, use `%cd%`.
+
 ### Python from Source
 
 1. **Clone Repository**:
@@ -292,9 +361,12 @@ knows -n 3 -e 2 -s 43
 14. Generate a graph using a custom schema file:
 
 ```shell
-knows -n 10 -e 15 -S schema-examples/employee_schema.json
+knows -n 10 -e 15 --schema schema-examples/employee_schema.json
 # or
-knows -n 10 -e 15 -S schema-examples/employee_schema.json -f cypher > employees.cypher
+knows -n 10 -e 15 --schema schema-examples/employee_schema.json -f cypher > employees.cypher
+# or with Docker
+docker run --rm -v "$(pwd)/schema-examples":/schemas lszeremeta/knows --schema /schemas/employee_schema.json -n 10 -e 15
+docker run --rm -v "$(pwd)/schema-examples":/schemas -v "$(pwd)":/data lszeremeta/knows --schema /schemas/employee_schema.json -n 10 -e 15 -f cypher /data/employees.cypher
 ```
 
 See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full schema documentation and more examples.
