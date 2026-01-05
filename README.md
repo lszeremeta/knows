@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/knows)](https://pypi.org/project/knows/) [![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/lszeremeta/knows?label=Docker%20image%20size)](https://hub.docker.com/r/lszeremeta/knows)
 
 Knows is a powerful and user-friendly tool for generating property graphs. These graphs are crucial in many fields.
-Knows supports multiple output formats, graphs schema and basic visualization capabilities, making it a go-to tool for researchers, educators and data enthusiasts.
+Knows supports multiple output formats, schema files and basic visualization capabilities, making it a go-to tool for researchers, educators and data enthusiasts.
 
 ## Key Features 🚀
 
