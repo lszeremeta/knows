@@ -301,6 +301,8 @@ Use them directly or as templates for your own schemas:
 
 ```shell
 knows -n 50 -e 100 --schema schema-examples/social_network_schema.json
+# or with Docker (using built-in example schemas)
+docker run --rm lszeremeta/knows --schema /app/schema-examples/social_network_schema.json -n 50 -e 100
 ```
 
 ## Usage Examples
@@ -309,12 +311,16 @@ knows -n 50 -e 100 --schema schema-examples/social_network_schema.json
 
 ```shell
 knows --schema my_schema.json
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json
 ```
 
 ### Specify node and edge count
 
 ```shell
 knows -n 100 -e 200 --schema my_schema.json
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 100 -e 200 --schema /data/my_schema.json
 ```
 
 ### Export to different formats
@@ -322,27 +328,51 @@ knows -n 100 -e 200 --schema my_schema.json
 ```shell
 # GraphML
 knows -n 50 -e 75 --schema my_schema.json -f graphml > graph.graphml
+# or
+knows -n 50 -e 75 --schema my_schema.json -f graphml graph.graphml
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f graphml > graph.graphml
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f graphml /data/graph.graphml
 
 # Cypher (for Neo4j)
 knows -n 50 -e 75 --schema my_schema.json -f cypher > graph.cypher
+# or
+knows -n 50 -e 75 --schema my_schema.json -f cypher graph.cypher
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f cypher > graph.cypher
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f cypher /data/graph.cypher
 
 # CSV
 knows -n 50 -e 75 --schema my_schema.json -f csv graph.csv
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f csv /data/graph.csv
 
 # JSON
 knows -n 50 -e 75 --schema my_schema.json -f json > graph.json
+# or
+knows -n 50 -e 75 --schema my_schema.json -f json graph.json
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f json > graph.json
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 50 -e 75 --schema /data/my_schema.json -f json /data/graph.json
 ```
 
 ### With reproducible seed
 
 ```shell
 knows -n 20 -e 30 --schema my_schema.json -s 42
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 20 -e 30 --schema /data/my_schema.json -s 42
 ```
 
-### Using Docker
+### Using Docker with built-in example schemas
 
 ```shell
-docker run --rm -v "$(pwd)":/data lszeremeta/knows --schema /data/my_schema.json -n 50 -e 75
+docker run --rm lszeremeta/knows --schema /app/schema-examples/social_network_schema.json -n 50 -e 100
+# or
+docker run --rm lszeremeta/knows --schema /app/schema-examples/employee_schema.json -n 20 -e 30 -f cypher
 ```
 
 ## Notes
