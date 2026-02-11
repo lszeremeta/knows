@@ -5,6 +5,35 @@
 Knows is a powerful and user-friendly tool for generating property graphs. These graphs are crucial in many fields.
 Knows supports multiple output formats, schema files and basic visualization capabilities, making it a go-to tool for researchers, educators and data enthusiasts.
 
+## Quick Start
+
+```shell
+pip install knows[draw]
+```
+
+```shell
+# Generate a random graph (default: YARS-PG format)
+knows
+
+# 10 nodes, 5 edges → GraphML file
+knows -n 10 -e 5 -f graphml graph.graphml
+
+# Visualize as PNG
+knows -n 20 -e 15 -f png graph.png
+
+# Export to CSV (creates graph_nodes.csv + graph_edges.csv)
+knows -n 10 -e 8 -f csv graph.csv
+
+# Use a custom schema
+knows -n 10 -e 15 --schema schema-examples/employee_schema.json -f cypher
+```
+
+Or with Docker - no installation needed:
+
+```shell
+docker run --rm lszeremeta/knows -n 10 -e 5 -f graphml
+```
+
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
@@ -21,6 +50,8 @@ Knows supports multiple output formats, schema files and basic visualization cap
   type constraints. See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full documentation.
 - **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected
   output format.
+- **Extensible Plugin System**: All output formats are plugins discovered at runtime. Add new formats by installing a
+  pip package - no changes to the core codebase required. See [PLUGINS.md](https://github.com/lszeremeta/knows/blob/main/PLUGINS.md) for details.
 
 > **Note on reproducibility:** The `-s`/`--seed` option makes the random aspects of graph generation deterministic
 > within the same software environment. Results may still differ across versions of Python or dependencies.
@@ -51,6 +82,24 @@ Build-in graph structure:
   `meetingCount` values.
 
 You can define custom graph structures using schema files. See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for details and examples.
+
+## Plugin System 🔌
+
+Knows uses a modular plugin architecture for output formats. Every format - including all 14 built-in ones - is a plugin
+discovered at runtime via Python's standard `entry_points` mechanism. This means you can:
+
+- **Install new formats** from pip packages without touching the Knows source code.
+- **Create your own formats** for domain-specific needs (custom serializations, database loaders, etc.).
+- **Add formats to the core** by implementing a simple class and registering it.
+
+A format plugin is any Python object that provides a `name`, `description`, `output_kind`, `default_extension`, and a
+`convert(graph, ctx)` method. No base class inheritance is required - Knows uses structural typing (duck typing with
+protocol checks). The `ctx` parameter is a `ConvertContext` carrying visualization settings (`viz_limit`, `show_info`)
+that visual formats use and text formats can ignore. Plugins can also produce visual output - either by using the
+built-in `GraphDrawer` helper or a custom rendering pipeline.
+
+For a step-by-step guide on creating and registering plugins (including visual formats), see
+[PLUGINS.md](https://github.com/lszeremeta/knows/blob/main/PLUGINS.md).
 
 ## Installation 🛠️
 

@@ -1,5 +1,6 @@
 import json
 
+from knows.format_plugin import OutputKind
 from knows.graph import Graph
 from knows.output_format import OutputFormat
 
@@ -11,7 +12,9 @@ def test_output_format_graphml():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    graphml_output = output_format.to_format('graphml')
+    result = output_format.to_format('graphml')
+    assert result.kind == OutputKind.TEXT
+    graphml_output = result.data
     assert '<graphml' in graphml_output
     assert '<node' in graphml_output
     assert '<edge' in graphml_output
@@ -35,7 +38,9 @@ def test_output_format_yarspg():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    yarspg_output = output_format.to_format('yarspg')
+    result = output_format.to_format('yarspg')
+    assert result.kind == OutputKind.TEXT
+    yarspg_output = result.data
     assert '(' in yarspg_output
     assert ')-({' in yarspg_output
     assert 'N1' in yarspg_output
@@ -54,7 +59,10 @@ def test_output_format_csv():
     graph = Graph(2, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    nodes_csv, edges_csv = output_format.to_format('csv')
+    result = output_format.to_format('csv')
+    assert result.kind == OutputKind.MULTI_FILE
+    nodes_csv = result.data['_nodes.csv']
+    edges_csv = result.data['_edges.csv']
     assert 'id,label,firstName,lastName' in nodes_csv
     assert 'id,id_from,id_to,label,strength,lastMeetingDate' in edges_csv
     assert len(nodes_csv.splitlines()) == 3  # Header + 2 nodes
@@ -77,7 +85,9 @@ def test_output_format_cypher():
     graph = Graph(3, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    cypher_output = output_format.to_format('cypher')
+    result = output_format.to_format('cypher')
+    assert result.kind == OutputKind.TEXT
+    cypher_output = result.data
     assert 'CREATE' in cypher_output
     assert ']->(' in cypher_output
     assert ')-[' in cypher_output
@@ -98,7 +108,9 @@ def test_output_format_json():
     graph = Graph(2, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    json_output = output_format.to_format('json')
+    result = output_format.to_format('json')
+    assert result.kind == OutputKind.TEXT
+    json_output = result.data
     json_data = json.loads(json_output)
     assert 'nodes' in json_data
     assert 'edges' in json_data
@@ -124,7 +136,9 @@ def test_output_format_gexf():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    gexf_output = output_format.to_format('gexf')
+    result = output_format.to_format('gexf')
+    assert result.kind == OutputKind.TEXT
+    gexf_output = result.data
     assert '<gexf' in gexf_output
     assert '<nodes>' in gexf_output
     assert '<edges>' in gexf_output
@@ -140,7 +154,9 @@ def test_output_format_gml():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    gml_output = output_format.to_format('gml')
+    result = output_format.to_format('gml')
+    assert result.kind == OutputKind.TEXT
+    gml_output = result.data
     assert 'graph' in gml_output
     assert 'node' in gml_output
     assert 'edge' in gml_output
@@ -163,7 +179,9 @@ def test_output_format_adjacency_list():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    adjacency_list_output = output_format.to_format('adjacency_list')
+    result = output_format.to_format('adjacency_list')
+    assert result.kind == OutputKind.TEXT
+    adjacency_list_output = result.data
     assert len(adjacency_list_output.splitlines()) == 3  # One line per node
     assert 'N1' in adjacency_list_output
     assert 'N2' in adjacency_list_output
@@ -175,7 +193,9 @@ def test_output_format_multiline_adjacency_list():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    multiline_output = output_format.to_format('multiline_adjacency_list')
+    result = output_format.to_format('multiline_adjacency_list')
+    assert result.kind == OutputKind.TEXT
+    multiline_output = result.data
     assert 'N1' in multiline_output
     assert len(multiline_output.splitlines()) >= 3
 
@@ -185,7 +205,9 @@ def test_output_format_edge_list():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    edge_list_output = output_format.to_format('edge_list')
+    result = output_format.to_format('edge_list')
+    assert result.kind == OutputKind.TEXT
+    edge_list_output = result.data
     assert 'knows' in edge_list_output
     assert len(edge_list_output.splitlines()) == 2
 
@@ -195,7 +217,9 @@ def test_output_format_svg():
     graph = Graph(3, 2)
     graph.generate()
     output_format = OutputFormat(graph)
-    svg_output = output_format.to_format('svg')
+    result = output_format.to_format('svg')
+    assert result.kind == OutputKind.TEXT
+    svg_output = result.data
     assert '<svg' in svg_output
     assert '</svg>' in svg_output
 
@@ -205,9 +229,10 @@ def test_output_format_png():
     graph = Graph(2, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    png_output = output_format.to_format('png')
-    assert isinstance(png_output, bytes)
-    assert png_output.startswith(b'\x89PNG')
+    result = output_format.to_format('png')
+    assert result.kind == OutputKind.BINARY
+    assert isinstance(result.data, bytes)
+    assert result.data.startswith(b'\x89PNG')
 
 
 def test_output_format_jpg():
@@ -215,9 +240,10 @@ def test_output_format_jpg():
     graph = Graph(2, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    jpg_output = output_format.to_format('jpg')
-    assert isinstance(jpg_output, bytes)
-    assert jpg_output.startswith(b'\xff\xd8')
+    result = output_format.to_format('jpg')
+    assert result.kind == OutputKind.BINARY
+    assert isinstance(result.data, bytes)
+    assert result.data.startswith(b'\xff\xd8')
 
 
 def test_output_format_jpg_big():
@@ -225,9 +251,10 @@ def test_output_format_jpg_big():
     graph = Graph(500, 300)
     graph.generate()
     output_format = OutputFormat(graph)
-    jpg_output = output_format.to_format('jpg')
-    assert isinstance(jpg_output, bytes)
-    assert jpg_output.startswith(b'\xff\xd8')
+    result = output_format.to_format('jpg')
+    assert result.kind == OutputKind.BINARY
+    assert isinstance(result.data, bytes)
+    assert result.data.startswith(b'\xff\xd8')
 
 
 def test_output_format_pdf():
@@ -235,6 +262,7 @@ def test_output_format_pdf():
     graph = Graph(2, 1)
     graph.generate()
     output_format = OutputFormat(graph)
-    pdf_output = output_format.to_format('pdf')
-    assert isinstance(pdf_output, bytes)
-    assert pdf_output.startswith(b'%PDF')
+    result = output_format.to_format('pdf')
+    assert result.kind == OutputKind.BINARY
+    assert isinstance(result.data, bytes)
+    assert result.data.startswith(b'%PDF')

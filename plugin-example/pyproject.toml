@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knows-ndjson"
+version = "0.1.0"
+description = "NDJSON (JSON Lines) output format plugin for Knows"
+requires-python = ">=3.10"
+dependencies = ["knows"]
+
+[project.optional-dependencies]
+test = ["pytest>=8.0.0"]
+
+# This is what makes the plugin discoverable by Knows.
+# The key ("ndjson") is just a label; the actual format name
+# comes from the plugin's `name` property.
+[project.entry-points."knows.formats"]
+ndjson = "knows_ndjson.plugin:create_plugin"

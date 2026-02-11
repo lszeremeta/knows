@@ -102,6 +102,9 @@ Changelog = "https://github.com/lszeremeta/knows/releases"
 [project.scripts]
 knows = "knows.__main__:main"
 
+[project.entry-points."knows.formats"]
+builtin = "knows.builtin_formats:builtin_formats"
+
 [tool.setuptools.packages.find]
 include = ["knows"]
 

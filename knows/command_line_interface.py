@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 
 from . import __version__
+from .format_registry import FormatRegistry
 from .graph import NODE_PROPERTIES, EDGE_PROPERTIES
 
 
@@ -68,22 +69,7 @@ class CommandLineInterface:
         parser.add_argument(
             "-f",
             "--format",
-            choices=[
-                'yarspg',
-                'graphml',
-                'csv',
-                'cypher',
-                'gexf',
-                'gml',
-                'svg',
-                'png',
-                'jpg',
-                'pdf',
-                'adjacency_list',
-                'multiline_adjacency_list',
-                'edge_list',
-                'json',
-            ],
+            choices=FormatRegistry().names(),
             default='yarspg',
             help="Format to output the graph. Default: yarspg. The svg, png, jpg and pdf formats are for simple graph visualization.",
         )

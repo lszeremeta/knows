@@ -1,14 +1,22 @@
+"""Entry point for the ``knows`` CLI.
+
+Running ``python -m knows`` or the ``knows`` console script both invoke
+:func:`main`.
+"""
+
 import random
 import sys
 from pathlib import Path
 
 from .command_line_interface import CommandLineInterface
+from .format_plugin import OutputKind
 from .graph import Graph
 from .graph_drawer import GraphDrawer
 from .output_format import OutputFormat
 
 
-def main():
+def main() -> None:
+    """Parse CLI arguments, generate a graph and write the chosen format."""
     try:
         cli = CommandLineInterface()
         rng = random.Random(cli.args.seed)
@@ -29,34 +37,37 @@ def main():
         graph.generate()
 
         output = OutputFormat(graph, viz_limit=cli.args.limit, show_info=cli.args.show_info)
-        formatted_output = output.to_format(cli.args.format)
-        binary_formats = {'png', 'jpg', 'pdf'}
+        result = output.to_format(cli.args.format)
+
         if cli.args.output:
             output_path = Path(cli.args.output)
-            if cli.args.format == 'csv':
-                nodes_csv, edges_csv = formatted_output
-                base = output_path.with_suffix('')
-                nodes_path = base.with_name(base.name + '_nodes').with_suffix('.csv')
-                edges_path = base.with_name(base.name + '_edges').with_suffix('.csv')
-                nodes_path.write_text(nodes_csv, encoding='utf-8')
-                edges_path.write_text(edges_csv, encoding='utf-8')
-            elif cli.args.format in binary_formats:
-                output_path.write_bytes(formatted_output)
-            else:
-                output_path.write_text(formatted_output, encoding='utf-8')
+            match result.kind:
+                case OutputKind.MULTI_FILE:
+                    base = output_path.with_suffix('')
+                    for suffix, content in result.data.items():
+                        file_path = base.with_name(base.name + suffix)
+                        if isinstance(content, bytes):
+                            file_path.write_bytes(content)
+                        else:
+                            file_path.write_text(content, encoding='utf-8')
+                case OutputKind.BINARY:
+                    output_path.write_bytes(result.data)
+                case OutputKind.TEXT:
+                    output_path.write_text(result.data, encoding='utf-8')
         else:
-            if cli.args.format == 'svg':
-                sys.stdout.buffer.write(formatted_output.encode('utf-8'))
-            elif cli.args.format in binary_formats:
-                sys.stdout.buffer.write(formatted_output)
-            elif cli.args.format == 'csv':
-                nodes_csv, edges_csv = formatted_output
-
-                # Print nodes to stdout and edges to stderr
-                print(nodes_csv)
-                print(edges_csv, file=sys.stderr)
-            else:
-                print(formatted_output)
+            match result.kind:
+                case OutputKind.MULTI_FILE:
+                    items = iter(result.data.values())
+                    print(next(items))
+                    for extra in items:
+                        print(extra, file=sys.stderr)
+                case OutputKind.BINARY:
+                    sys.stdout.buffer.write(result.data)
+                case OutputKind.TEXT:
+                    if result.default_extension == '.svg':
+                        sys.stdout.buffer.write(result.data.encode('utf-8'))
+                    else:
+                        print(result.data)
 
         if cli.args.draw:
             try:
