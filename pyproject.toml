@@ -110,3 +110,6 @@ include = ["knows"]
 
 [tool.setuptools.package-data]
 knows = ["schema.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
