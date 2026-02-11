@@ -136,6 +136,9 @@ name = "knows-xml"
 version = "1.0.0"
 dependencies = ["knows"]
 
+[tool.setuptools.packages.find]
+include = ["knows_xml"]
+
 [project.entry-points."knows.formats"]
 xml = "knows_xml.plugin:create_plugin"
 ```
