@@ -171,6 +171,7 @@ Properties can be defined in two ways:
 | `DateTime` | ISO datetime string | `min`, `max` (default: -30 years to now) |
 | `Time` | Time string | - |
 | `Year` | Year number | `min`, `max` (default: 1950-2025) |
+| `Duration` | ISO 8601 duration string | `min`, `max` (default: PT0S to P1Y) |
 
 ### Enum Type
 
@@ -207,9 +208,64 @@ Define a fixed set of possible values:
 }
 ```
 
+### For Duration Type
+
+Durations use the [ISO 8601 duration](https://en.wikipedia.org/wiki/ISO_8601#Durations)
+format - the same notation Cypher's `duration()` accepts. A duration string
+starts with `P` ("period"); a `T` separates the date part (years/months/weeks/days)
+from the time part (hours/minutes/seconds):
+
+| Component | Meaning | Example |
+|-----------|---------|---------|
+| `nY` | years | `P2Y` = 2 years |
+| `nM` (before `T`) | months | `P3M` = 3 months |
+| `nW` | weeks | `P2W` = 2 weeks |
+| `nD` | days | `P10D` = 10 days |
+| `nH` (after `T`) | hours | `PT5H` = 5 hours |
+| `nM` (after `T`) | minutes | `PT30M` = 30 minutes |
+| `nS` (after `T`) | seconds | `PT45S` = 45 seconds |
+
+Components combine in order, e.g. `P1Y2M10DT2H30M` ("1 year, 2 months, 10 days,
+2 hours, 30 minutes"). Generated values are ISO 8601 strings like `P5DT3H20M`;
+zero components are omitted and an empty duration is rendered as `PT0S`.
+
+Constraints:
+
+- `min`: Minimum duration as an ISO 8601 duration string (default: `PT0S`)
+- `max`: Maximum duration as an ISO 8601 duration string (default: `P1Y`)
+
+Examples:
+
+```json
+{
+    "uptime": "Duration",
+    "warranty": {"type": "Duration", "min": "PT0S", "max": "P2Y"},
+    "taskTime": {"type": "Duration", "min": "PT30M", "max": "PT8H"},
+    "loanTerm": {"type": "Duration", "min": "P1Y", "max": "P30Y"}
+}
+```
+
+The simple form (`"uptime": "Duration"`) uses the default `PT0S`-`P1Y` range.
+Like other types, `Duration` can be marked `symmetric` on edges:
+
+```json
+{
+    "edgeProperties": {
+        "totalCollaborationTime": {"type": "Duration", "min": "P7D", "max": "P3Y", "symmetric": true}
+    }
+}
+```
+
+> **Note:** To draw a random value from the `min`-`max` range, durations are
+> reduced to seconds using fixed calendar approximations (1 year = 365 days,
+> 1 month = 30 days, 1 week = 7 days). This is sufficient for synthetic data.
+> Weeks (`nW`) are accepted in `min`/`max` bounds but never appear in
+> generated values - e.g. a `P2W` bound is treated as 14 days and a value of
+> that length is rendered as `P14D`.
+
 ### For Text Type
 
-- `maxLength`: Maximum number of characters
+- `maxLength`: Maximum number of characters (minimum: 5)
 
 ```json
 {
@@ -233,6 +289,7 @@ GQL-style uppercase type names are supported as aliases:
 | `DATE` | `Date` |
 | `DATETIME` | `DateTime` |
 | `ZONED DATETIME` | `DateTime` |
+| `DURATION` | `Duration` |
 
 ## Symmetric Edge Properties
 
@@ -249,6 +306,8 @@ Edge properties can be marked as `symmetric` to ensure edges in both directions 
 
 When an edge A→B is created and a reverse edge B→A already exists, symmetric properties are copied from the existing
 edge. This is useful for mutual relationships where both directions should have consistent values.
+
+`symmetric` is only valid on edge properties - using it in `nodeProperties` is rejected during schema validation.
 
 ## Computed Node Properties
 

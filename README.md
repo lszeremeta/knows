@@ -45,7 +45,7 @@ docker run --rm lszeremeta/knows -n 10 -e 5 -f graphml
 - **Docker Compatibility**: Deploy Knows in Docker containers for a consistent and isolated runtime environment.
 - **Selectable Properties**: Choose which node and edge properties should be generated.
 - **Custom Schema Support**: Define custom node/edge types and properties using GQL-inspired (ISO/IEC 39075) JSON schema
-  files. Includes [JSON Schema](https://github.com/lszeremeta/knows/blob/main/knows/schema.json) for validation. Schemas support many data types (String, Int, Float, Date,
+  files. Includes [JSON Schema](https://github.com/lszeremeta/knows/blob/main/knows/schema.json) for validation. Schemas support many data types (String, Int, Float, Date, Duration,
   enums, and more), symmetric edge properties (for mutual relationships), computed node properties (like degree), and
   type constraints. See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for full documentation.
 - **Reproducible graphs**: Ensure deterministic outputs by setting the `-s`/`--seed` option regardless of the selected

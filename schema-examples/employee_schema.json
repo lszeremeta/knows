@@ -17,13 +17,15 @@
         "isManager": "Boolean",
         "isRemote": "Boolean",
         "yearsOfExperience": {"type": "Int", "min": 0, "max": 40},
-        "performanceRating": {"type": "Float", "min": 1.0, "max": 5.0, "precision": 1}
+        "performanceRating": {"type": "Float", "min": 1.0, "max": 5.0, "precision": 1},
+        "probationPeriod": {"type": "DURATION", "min": "P1M", "max": "P6M"}
     },
     "edgeProperties": {
         "sharedProjects": {"type": "Int", "min": 1, "max": 50, "symmetric": true},
         "collaborationStrength": {"type": "Float", "min": 0.0, "max": 1.0, "symmetric": true},
         "since": {"type": "Date", "symmetric": true},
         "lastInteraction": {"type": "Date", "symmetric": true},
+        "totalCollaborationTime": {"type": "Duration", "min": "P7D", "max": "P3Y", "symmetric": true},
         "collaborationType": {"enum": ["sameTeam", "crossFunctional", "mentorship", "projectBased"]}
     },
     "computedNodeProperties": {

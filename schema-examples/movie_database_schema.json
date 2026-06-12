@@ -17,6 +17,7 @@
         "netWorth": {"type": "Int", "min": 10000, "max": 500000000},
         "debutYear": {"type": "Year", "min": 1920, "max": 2025},
         "isActive": "Boolean",
+        "longestRuntime": {"type": "Duration", "min": "PT1H", "max": "PT3H30M"},
         "socialFollowers": {"type": "Int", "min": 0, "max": 500000000},
         "primaryGenre": {"enum": ["drama", "comedy", "action", "thriller", "horror", "romance", "scifi", "documentary", "animation", "musical"]}
     },

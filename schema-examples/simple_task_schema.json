@@ -4,7 +4,8 @@
     "edgeLabel": "dependsOn",
     "nodeProperties": {
         "title": "Sentence",
-        "status": {"enum": ["todo", "inProgress", "done"]}
+        "status": {"enum": ["todo", "inProgress", "done"]},
+        "estimatedDuration": {"type": "Duration", "min": "PT30M", "max": "P5D"}
     },
     "edgeProperties": {
         "isBlocking": "Boolean"

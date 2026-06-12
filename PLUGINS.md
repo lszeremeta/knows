@@ -282,7 +282,7 @@ class SplitFormat(_BaseFormat):
 
 When `OutputKind.MULTI_FILE` is used:
 
-- File output → for each key–value pair, a file is written as `<base><suffix>` (e.g. `graph_nodes.txt`)
+- File output → for each key-value pair, a file is written as `<base><suffix>` (e.g. `graph_nodes.txt`)
 - Stdout → first entry to stdout, remaining entries to stderr
 
 The dict keys are **filename suffixes** appended to the base name. For example, if the user runs

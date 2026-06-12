@@ -25,11 +25,13 @@ Example schema file:
 
 import datetime
 import json
+import re
 from importlib import resources
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from faker import Faker
+from faker.providers.date_time import ParseError
 import jsonschema
 from jsonschema import ValidationError
 
@@ -57,6 +59,248 @@ def _get_json_schema() -> dict:
     return _KNOWS_JSON_SCHEMA
 
 
+# Calendar approximations used to reduce ISO 8601 durations to a single
+# scalar (seconds) so a value can be drawn from a [min, max] range. Months
+# and years are not fixed-length, so this is intentionally approximate and
+# documented as such for synthetic data generation.
+_SECONDS_PER_MINUTE = 60
+_SECONDS_PER_HOUR = 60 * _SECONDS_PER_MINUTE
+_SECONDS_PER_DAY = 24 * _SECONDS_PER_HOUR
+_SECONDS_PER_WEEK = 7 * _SECONDS_PER_DAY
+_SECONDS_PER_MONTH = 30 * _SECONDS_PER_DAY
+_SECONDS_PER_YEAR = 365 * _SECONDS_PER_DAY
+
+# ISO 8601 duration: P[nY][nM][nW][nD][T[nH][nM][nS]] (integer components).
+# The (?!$) lookahead after P rejects an empty "P", and the one after T
+# rejects a dangling time designator (e.g. "PT") with no time component.
+_DURATION_PATTERN = re.compile(
+    r'^P(?!$)'
+    r'(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?'
+    r'(?:T(?!$)(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$'
+)
+
+
+def _duration_to_seconds(iso: str) -> int:
+    """Convert an ISO 8601 duration string to an (approximate) seconds count.
+
+    Uses fixed calendar approximations (1 year = 365 days, 1 month = 30 days,
+    1 week = 7 days) so durations can be compared and sampled from a range.
+
+    Args:
+        iso: ISO 8601 duration string, e.g. "P1Y2M10DT2H30M".
+
+    Returns:
+        Total number of seconds.
+
+    Raises:
+        SchemaError: If the string is not a valid ISO 8601 duration.
+    """
+    match = _DURATION_PATTERN.match(iso)
+    if not match:
+        raise SchemaError(f"Invalid ISO 8601 duration: {iso!r}")
+    years, months, weeks, days, hours, minutes, seconds = (
+        int(g) if g else 0 for g in match.groups()
+    )
+    return (
+        years * _SECONDS_PER_YEAR
+        + months * _SECONDS_PER_MONTH
+        + weeks * _SECONDS_PER_WEEK
+        + days * _SECONDS_PER_DAY
+        + hours * _SECONDS_PER_HOUR
+        + minutes * _SECONDS_PER_MINUTE
+        + seconds
+    )
+
+
+def _seconds_to_duration(total: int) -> str:
+    """Format a seconds count as an ISO 8601 duration string.
+
+    Decomposes the value using the same calendar approximations as
+    :func:`_duration_to_seconds`, omitting zero components. A zero total
+    is rendered as "PT0S".
+
+    Args:
+        total: Total number of seconds (non-negative).
+
+    Returns:
+        ISO 8601 duration string, e.g. "P1Y2M10DT2H30M".
+    """
+    years, total = divmod(total, _SECONDS_PER_YEAR)
+    months, total = divmod(total, _SECONDS_PER_MONTH)
+    days, total = divmod(total, _SECONDS_PER_DAY)
+    hours, total = divmod(total, _SECONDS_PER_HOUR)
+    minutes, seconds = divmod(total, _SECONDS_PER_MINUTE)
+
+    date_part = "".join(
+        f"{v}{u}" for v, u in ((years, 'Y'), (months, 'M'), (days, 'D')) if v
+    )
+    time_part = "".join(
+        f"{v}{u}" for v, u in ((hours, 'H'), (minutes, 'M'), (seconds, 'S')) if v
+    )
+    if time_part:
+        return f"P{date_part}T{time_part}"
+    if date_part:
+        return f"P{date_part}"
+    return "PT0S"
+
+
+def _normalize_duration_config(config: dict, prop_name: str) -> dict:
+    """Validate Duration min/max once and precompute them as seconds.
+
+    Args:
+        config: Generator config, optionally with 'min'/'max' ISO 8601
+            duration strings.
+        prop_name: Property name, used in error messages.
+
+    Returns:
+        A copy of the config with 'min'/'max' replaced by seconds counts.
+
+    Raises:
+        SchemaError: If a bound is not a valid ISO 8601 duration string
+            or min exceeds max.
+    """
+    normalized = dict(config)
+    for key, default in (('min', 'PT0S'), ('max', 'P1Y')):
+        value = normalized.get(key, default)
+        if not isinstance(value, str):
+            raise SchemaError(
+                f"Property '{prop_name}': '{key}' must be an ISO 8601 "
+                f"duration string, got {value!r}"
+            )
+        try:
+            normalized[key] = _duration_to_seconds(value)
+        except SchemaError as e:
+            raise SchemaError(f"Property '{prop_name}': {e}") from None
+    if normalized['min'] > normalized['max']:
+        raise SchemaError(
+            f"Property '{prop_name}': duration 'min' is greater than 'max'"
+        )
+    return normalized
+
+
+def _normalize_date_config(config: dict, prop_name: str) -> dict:
+    """Validate Date min/max once and precompute them as date objects.
+
+    Args:
+        config: Generator config, optionally with 'min'/'max' ISO dates.
+        prop_name: Property name, used in error messages.
+
+    Returns:
+        A copy of the config with 'min'/'max' replaced by date objects.
+
+    Raises:
+        SchemaError: If a bound is not a valid ISO date (YYYY-MM-DD)
+            or min is later than max.
+    """
+    normalized = dict(config)
+    for key, default in (('min', '1970-01-01'), ('max', '2025-12-31')):
+        value = normalized.get(key, default)
+        try:
+            normalized[key] = datetime.date.fromisoformat(value)
+        except (TypeError, ValueError):
+            raise SchemaError(
+                f"Property '{prop_name}': '{key}' must be an ISO date "
+                f"(YYYY-MM-DD), got {value!r}"
+            ) from None
+    if normalized['min'] > normalized['max']:
+        raise SchemaError(
+            f"Property '{prop_name}': date 'min' is later than 'max'"
+        )
+    return normalized
+
+
+def _normalize_datetime_config(config: dict, prop_name: str) -> dict:
+    """Validate DateTime min/max by trial-generating a value with Faker.
+
+    Faker accepts several bound formats ('-30y', 'now', ISO dates,
+    timestamps, ...), so the bounds are checked by attempting a generation
+    on a throwaway Faker instance instead of matching a pattern.
+
+    Args:
+        config: Generator config, optionally with 'min'/'max' bounds.
+        prop_name: Property name, used in error messages.
+
+    Returns:
+        The config, unchanged.
+
+    Raises:
+        SchemaError: If Faker cannot interpret one of the bounds.
+    """
+    try:
+        Faker().date_time_between(
+            start_date=config.get('min', '-30y'),
+            end_date=config.get('max', 'now')
+        )
+    except (ParseError, ValueError, TypeError, OverflowError) as e:
+        raise SchemaError(
+            f"Property '{prop_name}': invalid DateTime bound: {e}"
+        ) from None
+    return config
+
+
+def _make_numeric_normalizer(
+    default_min: Union[int, float],
+    default_max: Union[int, float],
+    strict: bool = False
+) -> Callable[[dict, str], dict]:
+    """Build a config normalizer that validates numeric min/max bounds.
+
+    Args:
+        default_min: Default lower bound, matching the type's generator.
+        default_max: Default upper bound, matching the type's generator.
+        strict: If True, require min strictly below max (Faker's pyfloat
+            rejects equal bounds).
+
+    Returns:
+        A normalizer raising SchemaError on non-numeric or reversed bounds.
+    """
+    def normalize(config: dict, prop_name: str) -> dict:
+        lo = config.get('min', default_min)
+        hi = config.get('max', default_max)
+        for key, value in (('min', lo), ('max', hi)):
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise SchemaError(
+                    f"Property '{prop_name}': '{key}' must be a number, "
+                    f"got {value!r}"
+                )
+        if lo > hi or (strict and lo == hi):
+            raise SchemaError(
+                f"Property '{prop_name}': 'min' ({lo}) must be "
+                f"{'below' if strict else 'at most'} 'max' ({hi})"
+            )
+        return config
+
+    return normalize
+
+
+# Default ranges shared by the type generators below and the numeric
+# config normalizers, so bounds are validated against the same defaults
+# the generators fall back to.
+_INT_DEFAULTS = (0, 10000)
+_FLOAT_DEFAULTS = (0.0, 1000.0)
+_YEAR_DEFAULTS = (1950, 2025)
+
+# Per-type config validation applied once when a generator is created, so
+# bad bounds fail fast with property context instead of mid-generation, and
+# parsed bounds are reused instead of being re-parsed for every value.
+_CONFIG_NORMALIZERS: Dict[str, Callable[[dict, str], dict]] = {
+    'Duration': _normalize_duration_config,
+    'Date': _normalize_date_config,
+    'DateTime': _normalize_datetime_config,
+    'Int': _make_numeric_normalizer(*_INT_DEFAULTS),
+    'Integer': _make_numeric_normalizer(*_INT_DEFAULTS),
+    'Float': _make_numeric_normalizer(*_FLOAT_DEFAULTS, strict=True),
+    'Double': _make_numeric_normalizer(*_FLOAT_DEFAULTS, strict=True),
+    'Year': _make_numeric_normalizer(*_YEAR_DEFAULTS),
+}
+
+
+def _normalize_config(type_name: str, config: dict, prop_name: str) -> dict:
+    """Apply the type's config normalizer, if it has one."""
+    normalizer = _CONFIG_NORMALIZERS.get(type_name)
+    return normalizer(config, prop_name) if normalizer else config
+
+
 # Type definitions mapping GQL-like types to Faker generators
 TYPE_GENERATORS: Dict[str, Callable[[Faker, dict], Any]] = {
     # String types
@@ -81,24 +325,24 @@ TYPE_GENERATORS: Dict[str, Callable[[Faker, dict], Any]] = {
 
     # Numeric types
     'Int': lambda f, cfg: f.random_int(
-        min=cfg.get('min', 0),
-        max=cfg.get('max', 10000)
+        min=cfg.get('min', _INT_DEFAULTS[0]),
+        max=cfg.get('max', _INT_DEFAULTS[1])
     ),
     'Integer': lambda f, cfg: f.random_int(
-        min=cfg.get('min', 0),
-        max=cfg.get('max', 10000)
+        min=cfg.get('min', _INT_DEFAULTS[0]),
+        max=cfg.get('max', _INT_DEFAULTS[1])
     ),
     'Float': lambda f, cfg: round(
         f.pyfloat(
-            min_value=cfg.get('min', 0.0),
-            max_value=cfg.get('max', 1000.0)
+            min_value=cfg.get('min', _FLOAT_DEFAULTS[0]),
+            max_value=cfg.get('max', _FLOAT_DEFAULTS[1])
         ),
         cfg.get('precision', 2)
     ),
     'Double': lambda f, cfg: round(
         f.pyfloat(
-            min_value=cfg.get('min', 0.0),
-            max_value=cfg.get('max', 1000.0)
+            min_value=cfg.get('min', _FLOAT_DEFAULTS[0]),
+            max_value=cfg.get('max', _FLOAT_DEFAULTS[1])
         ),
         cfg.get('precision', 4)
     ),
@@ -106,9 +350,11 @@ TYPE_GENERATORS: Dict[str, Callable[[Faker, dict], Any]] = {
     'Bool': lambda f, cfg: f.boolean(),
 
     # Date/Time types
+    # Date and Duration receive bounds pre-parsed by their config
+    # normalizers (date objects / seconds counts).
     'Date': lambda f, cfg: f.date_between(
-        start_date=datetime.date.fromisoformat(cfg.get('min', '1970-01-01')),
-        end_date=datetime.date.fromisoformat(cfg.get('max', '2025-12-31'))
+        start_date=cfg.get('min', datetime.date(1970, 1, 1)),
+        end_date=cfg.get('max', datetime.date(2025, 12, 31))
     ).isoformat(),
     'DateTime': lambda f, cfg: f.date_time_between(
         start_date=cfg.get('min', '-30y'),
@@ -116,8 +362,14 @@ TYPE_GENERATORS: Dict[str, Callable[[Faker, dict], Any]] = {
     ).isoformat(),
     'Time': lambda f, cfg: f.time(),
     'Year': lambda f, cfg: f.random_int(
-        min=cfg.get('min', 1950),
-        max=cfg.get('max', 2025)
+        min=cfg.get('min', _YEAR_DEFAULTS[0]),
+        max=cfg.get('max', _YEAR_DEFAULTS[1])
+    ),
+    'Duration': lambda f, cfg: _seconds_to_duration(
+        f.random_int(
+            min=cfg.get('min', 0),
+            max=cfg.get('max', _SECONDS_PER_YEAR)
+        )
     ),
 }
 
@@ -133,6 +385,7 @@ TYPE_ALIASES: Dict[str, str] = {
     'DATE': 'Date',
     'DATETIME': 'DateTime',
     'ZONED DATETIME': 'DateTime',
+    'DURATION': 'Duration',
 }
 
 # Supported computed node property types
@@ -207,12 +460,51 @@ def _format_validation_error(error: ValidationError) -> str:
             # Check if this is a computed property type error
             if len(path) >= 2 and path[-2] == "computedNodeProperties":
                 return f"Computed property '{field_name}' must be a string type"
+            # Type-conditional min/max constraint (e.g. Duration bounds
+            # must be strings, numeric bounds must be numbers)
+            if field_name in ("min", "max") and len(path) >= 3:
+                return (
+                    f"Property '{path[-2]}': '{field_name}' must be a "
+                    f"{error.validator_value}, got {error.instance!r}"
+                )
             return f"{field_name} must be a {error.validator_value}"
         return f"Schema must be a {error.validator_value}"
+
+    if error.validator == "pattern":
+        if path and path[-1] in ("min", "max") and len(path) >= 2:
+            prop_name = path[-2]
+            if str(error.validator_value).startswith("^P"):
+                return (
+                    f"Property '{prop_name}': '{path[-1]}' must be an "
+                    f"ISO 8601 duration string (e.g. 'P1Y2M10DT2H30M'), "
+                    f"got {error.instance!r}"
+                )
+            return (
+                f"Property '{prop_name}': '{path[-1]}' must be an ISO date "
+                f"(YYYY-MM-DD), got {error.instance!r}"
+            )
+        return error.message
 
     if error.validator == "minLength":
         field_name = path[-1] if path else "value"
         return f"{field_name} cannot be empty"
+
+    if error.validator == "minimum":
+        if path and len(path) >= 2:
+            return (
+                f"Property '{path[-2]}': '{path[-1]}' must be at least "
+                f"{error.validator_value}, got {error.instance!r}"
+            )
+        return error.message
+
+    if error.validator == "not":
+        # The only 'not' rule rejects 'symmetric' on node properties
+        if error.validator_value == {"required": ["symmetric"]} and path:
+            return (
+                f"Property '{path[-1]}': 'symmetric' is only supported "
+                f"on edge properties"
+            )
+        return error.message
 
     if error.validator == "enum":
         if path:
@@ -269,19 +561,27 @@ def _format_validation_error(error: ValidationError) -> str:
     return error.message
 
 
-def _create_generator(definition: Union[str, dict]) -> Callable[[Faker], Any]:
+def _create_generator(
+    definition: Union[str, dict],
+    prop_name: str = 'property'
+) -> Callable[[Faker], Any]:
     """Create a Faker generator function from a property definition.
 
     Args:
         definition: Property type definition.
+        prop_name: Property name, used in validation error messages.
 
     Returns:
         A function that takes a Faker instance and returns a generated value.
+
+    Raises:
+        SchemaError: If the definition's constraints are invalid for its type.
     """
     if isinstance(definition, str):
         type_name = TYPE_ALIASES.get(definition.upper(), definition)
         base_gen = TYPE_GENERATORS[type_name]
-        return lambda f: base_gen(f, {})
+        config = _normalize_config(type_name, {}, prop_name)
+        return lambda f: base_gen(f, config)
 
     elif isinstance(definition, dict):
         if 'enum' in definition:
@@ -292,10 +592,14 @@ def _create_generator(definition: Union[str, dict]) -> Callable[[Faker], Any]:
             base_gen = TYPE_GENERATORS[type_name]
             # Filter out non-generator config keys like 'type' and 'symmetric'
             config = {k: v for k, v in definition.items() if k not in ('type', 'symmetric')}
+            config = _normalize_config(type_name, config, prop_name)
             return lambda f: base_gen(f, config)
 
-    # Fallback (shouldn't reach here after validation)
-    return lambda f: f.word()
+    # Unreachable after schema validation; fail loudly rather than
+    # silently generating filler data.
+    raise SchemaError(
+        f"Property '{prop_name}': invalid definition: {definition!r}"
+    )
 
 
 def schema_to_generators(schema: dict) -> Tuple[
@@ -317,11 +621,11 @@ def schema_to_generators(schema: dict) -> Tuple[
 
     # Process node properties
     for prop_name, prop_def in schema.get('nodeProperties', {}).items():
-        node_generators[prop_name] = _create_generator(prop_def)
+        node_generators[prop_name] = _create_generator(prop_def, prop_name)
 
     # Process edge properties
     for prop_name, prop_def in schema.get('edgeProperties', {}).items():
-        edge_generators[prop_name] = _create_generator(prop_def)
+        edge_generators[prop_name] = _create_generator(prop_def, prop_name)
 
     # Get labels (with defaults)
     node_label = schema.get('nodeLabel', 'Node')

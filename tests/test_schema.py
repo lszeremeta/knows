@@ -2,7 +2,6 @@
 
 import json
 import pytest
-from pathlib import Path
 
 from knows.schema import (
     load_schema,
@@ -246,7 +245,7 @@ def test_type_generators_exist():
         'String', 'Name', 'FirstName', 'LastName', 'Email', 'Phone',
         'Address', 'City', 'Country', 'Company', 'Job',
         'Int', 'Integer', 'Float', 'Double', 'Boolean', 'Bool',
-        'Date', 'DateTime', 'Time', 'Year'
+        'Date', 'DateTime', 'Time', 'Year', 'Duration'
     ]
     for t in expected_types:
         assert t in TYPE_GENERATORS, f"Missing type generator: {t}"
@@ -291,6 +290,240 @@ def test_float_generator_with_constraints():
     
     values = [gen(faker) for _ in range(100)]
     assert all(0.0 <= v <= 1.0 for v in values)
+
+
+# --- Duration Type Tests ---
+
+@pytest.mark.parametrize("iso", [
+    "PT0S",
+    "P1Y",
+    "P1M",
+    "P7D",
+    "PT30M",
+    "P1Y2M10DT2H30M",
+    "P1M15DT6H30M",
+])
+def test_duration_seconds_roundtrip(iso):
+    """ISO 8601 durations survive a seconds round-trip unchanged."""
+    from knows.schema import _duration_to_seconds, _seconds_to_duration
+
+    seconds = _duration_to_seconds(iso)
+    assert _seconds_to_duration(seconds) == iso
+
+
+def test_duration_zero_renders_pt0s():
+    """A zero-second duration renders as PT0S."""
+    from knows.schema import _seconds_to_duration
+
+    assert _seconds_to_duration(0) == "PT0S"
+
+
+@pytest.mark.parametrize("bad", ["", "P", "1Y", "PT", "P1H", "garbage"])
+def test_duration_invalid_raises(bad):
+    """Invalid ISO 8601 duration strings raise SchemaError."""
+    from knows.schema import _duration_to_seconds, SchemaError
+
+    with pytest.raises(SchemaError):
+        _duration_to_seconds(bad)
+
+
+def test_duration_generator_default_range():
+    """Duration generator stays within the default PT0S..P1Y range."""
+    from faker import Faker
+    from knows.schema import _create_generator, _duration_to_seconds
+
+    gen = _create_generator("Duration")
+    faker = Faker()
+    faker.seed_instance(42)
+
+    upper = _duration_to_seconds("P1Y")
+    values = [gen(faker) for _ in range(100)]
+    for v in values:
+        assert 0 <= _duration_to_seconds(v) <= upper
+
+
+def test_duration_generator_with_constraints():
+    """Duration generator respects explicit min/max constraints."""
+    from faker import Faker
+    from knows.schema import _create_generator, _duration_to_seconds
+
+    gen = _create_generator({"type": "Duration", "min": "PT1H", "max": "P5D"})
+    faker = Faker()
+    faker.seed_instance(42)
+
+    lower = _duration_to_seconds("PT1H")
+    upper = _duration_to_seconds("P5D")
+    values = [gen(faker) for _ in range(100)]
+    for v in values:
+        assert lower <= _duration_to_seconds(v) <= upper
+
+
+def test_duration_uppercase_alias_resolves():
+    """The DURATION alias resolves to the Duration generator."""
+    from faker import Faker
+    from knows.schema import _create_generator, _duration_to_seconds
+
+    gen = _create_generator({"type": "DURATION", "min": "P1M", "max": "P6M"})
+    faker = Faker()
+    faker.seed_instance(42)
+
+    value = gen(faker)
+    lower = _duration_to_seconds("P1M")
+    upper = _duration_to_seconds("P6M")
+    assert lower <= _duration_to_seconds(value) <= upper
+
+
+def test_duration_weeks_parse_but_render_as_days():
+    """Weeks are accepted in bounds but rendered as days (P2W -> P14D)."""
+    from knows.schema import _duration_to_seconds, _seconds_to_duration
+
+    seconds = _duration_to_seconds("P2W")
+    assert seconds == 14 * 24 * 3600
+    assert _seconds_to_duration(seconds) == "P14D"
+
+
+def test_duration_min_greater_than_max_raises():
+    """A min bound above the max bound fails at generator creation."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="uptime"):
+        _create_generator(
+            {"type": "Duration", "min": "P2Y", "max": "P1Y"}, "uptime"
+        )
+
+
+def test_duration_non_string_bound_raises():
+    """A non-string Duration bound fails at generator creation."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="uptime"):
+        _create_generator({"type": "Duration", "min": 100}, "uptime")
+
+
+def test_duration_invalid_bound_raises_at_creation():
+    """An unparseable Duration bound fails at generator creation, not use."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="uptime"):
+        _create_generator({"type": "Duration", "min": "banana"}, "uptime")
+
+
+def test_date_min_later_than_max_raises():
+    """A Date min bound after the max bound fails at generator creation."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="hired"):
+        _create_generator(
+            {"type": "Date", "min": "2025-01-01", "max": "2020-01-01"}, "hired"
+        )
+
+
+def test_date_invalid_bound_raises_at_creation():
+    """A non-ISO Date bound fails at generator creation, not use."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="hired"):
+        _create_generator({"type": "Date", "min": 100}, "hired")
+
+
+@pytest.mark.parametrize("props,message", [
+    ({"uptime": {"type": "Duration", "min": "banana"}}, "ISO 8601 duration"),
+    ({"uptime": {"type": "Duration", "min": 100}}, "must be a string"),
+    ({"hired": {"type": "Date", "min": 100}}, "must be a string"),
+    ({"hired": {"type": "Date", "min": "01-01-2020"}}, "ISO date"),
+    ({"age": {"type": "Int", "min": "ten"}}, "must be a number"),
+    ({"desc": {"type": "Text", "maxLength": 3}}, "at least 5"),
+])
+def test_load_schema_rejects_bad_bounds(tmp_path, props, message):
+    """Type-incompatible min/max bounds are rejected when loading a schema."""
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps({"nodeProperties": props}))
+
+    with pytest.raises(SchemaError, match=message):
+        load_schema(schema_path)
+
+
+# --- Numeric and DateTime Bound Tests ---
+
+@pytest.mark.parametrize("definition", [
+    {"type": "Int", "min": 20, "max": 10},
+    {"type": "Int", "min": 20000},
+    {"type": "Year", "min": 2030, "max": 2020},
+    {"type": "Float", "min": 5.0, "max": 1.0},
+])
+def test_numeric_min_greater_than_max_raises(definition):
+    """Reversed numeric bounds fail at generator creation."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="prop"):
+        _create_generator(definition, "prop")
+
+
+def test_float_equal_bounds_raise():
+    """Equal Float bounds fail at creation (Faker requires min < max)."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="score"):
+        _create_generator({"type": "Float", "min": 1.0, "max": 1.0}, "score")
+
+
+def test_int_equal_bounds_allowed():
+    """Equal Int bounds are valid and produce the constant value."""
+    from faker import Faker
+    from knows.schema import _create_generator
+
+    gen = _create_generator({"type": "Int", "min": 5, "max": 5}, "rating")
+    faker = Faker()
+    faker.seed_instance(42)
+    assert gen(faker) == 5
+
+
+def test_numeric_non_number_bound_raises():
+    """A non-numeric bound on a numeric type fails at generator creation."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="age"):
+        _create_generator({"type": "Int", "min": "ten"}, "age")
+
+
+def test_datetime_invalid_bound_raises_at_creation():
+    """An unparseable DateTime bound fails at generator creation, not use."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="ts"):
+        _create_generator({"type": "DateTime", "min": "banana"}, "ts")
+
+
+def test_datetime_faker_style_bounds_accepted():
+    """Faker-style DateTime bounds like '-30y' and 'now' keep working."""
+    from faker import Faker
+    from knows.schema import _create_generator
+
+    gen = _create_generator({"type": "DateTime", "min": "-1y", "max": "now"}, "ts")
+    faker = Faker()
+    faker.seed_instance(42)
+    assert isinstance(gen(faker), str)
+
+
+def test_invalid_definition_type_raises():
+    """A definition that is neither string nor dict fails loudly."""
+    from knows.schema import _create_generator, SchemaError
+
+    with pytest.raises(SchemaError, match="prop"):
+        _create_generator(123, "prop")
+
+
+@pytest.mark.parametrize("definition", [
+    {"type": "Name", "symmetric": True},
+    {"enum": ["a", "b"], "symmetric": True},
+])
+def test_symmetric_rejected_on_node_properties(tmp_path, definition):
+    """'symmetric' is only valid on edge properties, not node properties."""
+    schema_path = tmp_path / "schema.json"
+    schema_path.write_text(json.dumps({"nodeProperties": {"name": definition}}))
+
+    with pytest.raises(SchemaError, match="edge properties"):
+        load_schema(schema_path)
 
 
 # --- Graph Integration Tests ---
@@ -392,6 +625,7 @@ def test_type_aliases_uppercase():
     assert TYPE_ALIASES.get('INTEGER') == 'Int'
     assert TYPE_ALIASES.get('BOOLEAN') == 'Boolean'
     assert TYPE_ALIASES.get('DATE') == 'Date'
+    assert TYPE_ALIASES.get('DURATION') == 'Duration'
 
 
 def test_type_aliases_in_schema(tmp_path):
@@ -703,7 +937,7 @@ def test_schema_consistency_validation():
     from knows.schema import _get_json_schema
 
     schema = _get_json_schema()
-    schema_types = set(schema['$defs']['simpleType']['enum'])
+    schema_types = set(schema['$defs']['typeName']['enum'])
 
     # All schema types should have a generator or alias
     for type_name in schema_types:
@@ -716,12 +950,21 @@ def test_all_generators_in_schema():
     from knows.schema import _get_json_schema
 
     schema = _get_json_schema()
-    schema_types = set(schema['$defs']['simpleType']['enum'])
+    schema_types = set(schema['$defs']['typeName']['enum'])
 
     # All generators should be in schema (canonical types)
     for type_name in TYPE_GENERATORS.keys():
         assert type_name in schema_types, \
             f"Generator type '{type_name}' not in JSON Schema"
+
+
+def test_duration_pattern_matches_json_schema():
+    """The duration regex in schema.json stays in sync with the Python one."""
+    from knows.schema import _get_json_schema, _DURATION_PATTERN
+
+    schema = _get_json_schema()
+    json_pattern = schema['$defs']['durationString']['pattern']
+    assert json_pattern == _DURATION_PATTERN.pattern
 
 
 def test_computed_types_consistency():

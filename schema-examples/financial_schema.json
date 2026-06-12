@@ -17,7 +17,8 @@
         "isActive": "Boolean",
         "isVerified": "Boolean",
         "riskScore": {"type": "Float", "min": 0.0, "max": 100.0, "precision": 1},
-        "currency": {"enum": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"]}
+        "currency": {"enum": ["USD", "EUR", "GBP", "JPY", "CHF", "CAD", "AUD", "CNY"]},
+        "loanTerm": {"type": "Duration", "min": "P1Y", "max": "P30Y"}
     },
     "edgeProperties": {
         "amount": {"type": "Float", "min": 0.01, "max": 1000000.0, "precision": 2},
