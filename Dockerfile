@@ -1,4 +1,4 @@
-FROM python:3.15.0a8-slim
+FROM python:3.14.6-slim
 LABEL maintainer="Łukasz Szeremeta <l.szeremeta.dev+knows@gmail.com>"
 WORKDIR /app
 # Copy the project files into the docker image (see .dockerignore)
