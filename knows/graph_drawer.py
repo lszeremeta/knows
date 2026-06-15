@@ -115,7 +115,9 @@ class GraphDrawer:
                 title = f"Graph Visualization ({len(self.graph)}/{self.original_node_count} nodes) - Knows"
             else:
                 title = "Graph Visualization - Knows"
-            plt.gcf().canvas.manager.set_window_title(title)
+            manager = plt.gcf().canvas.manager
+            if manager is not None:
+                manager.set_window_title(title)
         except Exception:
             pass
 
