@@ -28,9 +28,6 @@ src = "pyproject.toml"
 [[file]]
 src = "knows/__init__.py"
 
-[[file]]
-src = ".bumpversion.cfg"
-
 # You can specify a list of commands to
 # run after the files have been patched
 # and before the git commit is made

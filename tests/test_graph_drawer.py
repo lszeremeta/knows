@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 import matplotlib
+import pytest
 
 # Use 'Agg' backend for matplotlib to avoid GUI issues in headless environments
 matplotlib.use('Agg')
@@ -86,6 +87,19 @@ def test_to_pdf_returns_bytes():
     pdf_output = drawer.to_pdf()
     assert isinstance(pdf_output, bytes)
     assert pdf_output.startswith(b'%PDF')
+
+
+def test_failed_export_closes_its_figure():
+    """A rendering error must not leak a matplotlib figure."""
+    graph = nx.DiGraph()
+    drawer = GraphDrawer(graph)
+    figures_before = set(matplotlib.pyplot.get_fignums())
+
+    with patch.object(drawer, 'draw', side_effect=RuntimeError('boom')):
+        with pytest.raises(RuntimeError, match='boom'):
+            drawer.to_png()
+
+    assert set(matplotlib.pyplot.get_fignums()) == figures_before
 
 
 def test_graph_properties_unchanged_after_drawing():

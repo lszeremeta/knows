@@ -1,9 +1,13 @@
 import argparse
-from pathlib import Path
 
 from . import __version__
 from .format_registry import FormatRegistry
-from .graph import NODE_PROPERTIES, EDGE_PROPERTIES
+from .graph import (
+    DEFAULT_EDGE_PROPS,
+    DEFAULT_NODE_PROPS,
+    EDGE_PROPERTIES,
+    NODE_PROPERTIES,
+)
 
 
 class CommandLineInterface:
@@ -86,11 +90,22 @@ class CommandLineInterface:
             ),
         )
         parser.add_argument(
+            "-l",
+            "--locale",
+            type=str,
+            default=None,
+            metavar="LOCALE",
+            help=(
+                "Locale code for generated property values "
+                "(e.g. pl_PL, de_DE, ja_JP). Default: en_US."
+            ),
+        )
+        parser.add_argument(
             "-np",
             "--node-props",
             nargs='*',
             choices=NODE_PROPERTIES,
-            default=['firstName', 'lastName'],
+            default=list(DEFAULT_NODE_PROPS),
             help=(
                     "Space-separated node properties. Available: "
                     + ', '.join(NODE_PROPERTIES)
@@ -102,7 +117,7 @@ class CommandLineInterface:
             "--edge-props",
             nargs='*',
             choices=EDGE_PROPERTIES,
-            default=['strength', 'lastMeetingDate'],
+            default=list(DEFAULT_EDGE_PROPS),
             help=(
                     "Space-separated edge properties. Available: "
                     + ', '.join(EDGE_PROPERTIES)
@@ -120,10 +135,14 @@ class CommandLineInterface:
             action="store_true",
             help="Show interactive graph window. Requires Tkinter. May not work in Docker.",
         )
+        parser.add_argument(
+            "--debug",
+            action="store_true",
+            help="Show full tracebacks instead of short error messages.",
+        )
         # Graphics output options (svg, png, jpg, pdf, --draw)
         gfx_group = parser.add_argument_group('Graphics output options (svg, png, jpg, pdf, -d)')
         gfx_group.add_argument(
-            "-l",
             "--limit",
             type=int,
             default=50,
@@ -162,12 +181,7 @@ class CommandLineInterface:
         # Derive show_info from hide_info
         args.show_info = not args.hide_info
 
-        # Validate schema file exists if specified
-        if args.schema:
-            schema_path = Path(args.schema)
-            if not schema_path.exists():
-                parser.error(f"Schema file not found: {args.schema}")
-            if not schema_path.suffix.lower() == '.json':
-                parser.error(f"Schema file must be JSON format: {args.schema}")
+        # Schema file validation (existence, extension, content) is
+        # handled by knows.schema.load_schema.
 
         return args

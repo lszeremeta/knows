@@ -231,6 +231,41 @@ def test_friendcount_in_computed_properties():
     assert 'friendCount' in COMPUTED_NODE_PROPERTIES
 
 
+def test_dense_graph_generation():
+    """Edge counts close to the maximum should generate correctly."""
+    graph = Graph(5, 18, seed=7)  # max is 5 * 4 = 20
+    graph.generate()
+    assert len(graph.graph.edges) == 18
+    assert all(u != v for u, v in graph.graph.edges)
+
+
+def test_dense_graph_symmetric_props_sync():
+    """Symmetric edge properties must also sync in the dense path."""
+    graph = Graph(3, 6, edge_props=list(SAME_EDGE_PROPS), seed=3)
+    graph.generate()
+    for u, v in graph.graph.edges:
+        if graph.graph.has_edge(v, u):
+            for key in SAME_EDGE_PROPS:
+                assert graph.graph[u][v][key] == graph.graph[v][u][key]
+
+
+def test_dense_graph_reproducibility():
+    """Dense generation must stay deterministic for the same seed."""
+    graph1 = Graph(4, 11, seed=5)
+    graph1.generate()
+    graph2 = Graph(4, 11, seed=5)
+    graph2.generate()
+    assert list(graph1.graph.edges(data=True)) == list(graph2.graph.edges(data=True))
+
+
+def test_graph_locale_changes_values():
+    """A Faker locale should influence generated property values."""
+    graph = Graph(3, 1, seed=42, locale='ja_JP')
+    graph.generate()
+    names = [props['firstName'] for _, props in graph.graph.nodes(data=True)]
+    assert any(any(ord(ch) > 127 for ch in name) for name in names)
+
+
 def test_friendcount_reproducibility_with_seed():
     """friendCount should be reproducible with same seed."""
     graph1 = Graph(10, 15, node_props=['friendCount'], seed=999)

@@ -114,3 +114,67 @@ def test_broken_plugin_warns():
 
     # Built-in formats should still be available
     assert 'yarspg' in reg.names()
+
+
+def test_factory_failure_warns():
+    """An exception raised by a plugin factory must not break discovery."""
+    mock_ep = MagicMock()
+    mock_ep.name = "broken_factory"
+
+    def broken_factory():
+        raise RuntimeError("boom")
+
+    mock_ep.load.return_value = broken_factory
+
+    from importlib.metadata import entry_points as real_ep
+
+    def patched_entry_points(group):
+        real = list(real_ep(group=group))
+        return real + [mock_ep]
+
+    reg = FormatRegistry()
+    reg.reset()
+
+    with patch("knows.format_registry.entry_points", side_effect=patched_entry_points):
+        with pytest.warns(match="Failed to initialize format plugin"):
+            reg._discover()
+
+    assert 'yarspg' in reg.names()
+
+
+def test_plugin_metadata_failure_warns():
+    """A property error in one plugin must not break discovery."""
+    class BrokenMetadataPlugin:
+        @property
+        def name(self):
+            raise RuntimeError("broken name")
+
+        description = "Broken"
+        output_kind = OutputKind.TEXT
+        default_extension = ".broken"
+
+        def convert(self, graph, ctx):
+            return FormatResult(
+                data="broken",
+                kind=OutputKind.TEXT,
+                default_extension=".broken",
+            )
+
+    mock_ep = MagicMock()
+    mock_ep.name = "broken_metadata"
+    mock_ep.load.return_value = lambda: [BrokenMetadataPlugin()]
+
+    from importlib.metadata import entry_points as real_ep
+
+    def patched_entry_points(group):
+        real = list(real_ep(group=group))
+        return real + [mock_ep]
+
+    reg = FormatRegistry()
+    reg.reset()
+
+    with patch("knows.format_registry.entry_points", side_effect=patched_entry_points):
+        with pytest.warns(match="Failed to inspect format plugin"):
+            reg._discover()
+
+    assert 'yarspg' in reg.names()

@@ -183,11 +183,11 @@ def test_cli_custom_limit(monkeypatch):
     assert cli.args.limit == 100
 
 
-def test_cli_limit_short_option(monkeypatch):
-    """Ensure short limit option is parsed."""
-    monkeypatch.setattr('sys.argv', ['prog', '-l', '75'])
+def test_cli_locale_short_option(monkeypatch):
+    """Ensure -l is the short option for --locale."""
+    monkeypatch.setattr('sys.argv', ['prog', '-l', 'de_DE'])
     cli = CommandLineInterface()
-    assert cli.args.limit == 75
+    assert cli.args.locale == 'de_DE'
 
 
 def test_cli_no_limit_option(monkeypatch):
@@ -209,3 +209,19 @@ def test_cli_default_show_info(monkeypatch):
     monkeypatch.setattr('sys.argv', ['prog'])
     cli = CommandLineInterface()
     assert cli.args.show_info is True
+
+
+def test_cli_locale_option(monkeypatch):
+    """Ensure --locale is parsed and defaults to None."""
+    monkeypatch.setattr('sys.argv', ['prog'])
+    assert CommandLineInterface().args.locale is None
+    monkeypatch.setattr('sys.argv', ['prog', '--locale', 'pl_PL'])
+    assert CommandLineInterface().args.locale == 'pl_PL'
+
+
+def test_cli_debug_option(monkeypatch):
+    """Ensure --debug is parsed and defaults to False."""
+    monkeypatch.setattr('sys.argv', ['prog'])
+    assert CommandLineInterface().args.debug is False
+    monkeypatch.setattr('sys.argv', ['prog', '--debug'])
+    assert CommandLineInterface().args.debug is True

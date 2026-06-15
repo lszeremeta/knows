@@ -51,31 +51,64 @@ class FormatRegistry:
                 )
                 continue
 
-            result = factory()
+            try:
+                result = factory()
 
-            # A factory may return a single plugin or an iterable of them.
-            # Guard against strings/bytes which are iterable but not plugins.
-            if isinstance(result, Iterable) and not isinstance(result, (str, bytes)):
-                plugins: Iterable[object] = result
-            else:
-                plugins = [result]
+                # Prefer a single conforming plugin even if it is also iterable.
+                if isinstance(result, FormatPlugin):
+                    plugins: Iterable[object] = [result]
+                elif isinstance(result, Iterable) and not isinstance(
+                    result, (str, bytes)
+                ):
+                    plugins = list(result)
+                else:
+                    plugins = [result]
+            except Exception as exc:
+                warnings.warn(
+                    f"Failed to initialize format plugin {ep.name!r}: {exc}",
+                    stacklevel=2,
+                )
+                continue
 
-            for plugin in plugins:
-                if not isinstance(plugin, FormatPlugin):
+            for candidate in plugins:
+                try:
+                    if not isinstance(candidate, FormatPlugin):
+                        warnings.warn(
+                            f"Plugin {ep.name!r} returned object that does not "
+                            f"satisfy FormatPlugin protocol",
+                            stacklevel=2,
+                        )
+                        continue
+                except Exception as exc:
                     warnings.warn(
-                        f"Plugin {ep.name!r} returned object that does not "
-                        f"satisfy FormatPlugin protocol: {plugin!r}",
+                        f"Failed to inspect format plugin {ep.name!r}: {exc}",
                         stacklevel=2,
                     )
                     continue
-                if plugin.name in self._plugins:
+
+                plugin = candidate
+                try:
+                    name = plugin.name
+                except Exception as exc:
                     warnings.warn(
-                        f"Duplicate format name {plugin.name!r} from "
+                        f"Failed to inspect format plugin {ep.name!r}: {exc}",
+                        stacklevel=2,
+                    )
+                    continue
+                if not isinstance(name, str) or not name:
+                    warnings.warn(
+                        f"Plugin {ep.name!r} returned an invalid format name: {name!r}",
+                        stacklevel=2,
+                    )
+                    continue
+                if name in self._plugins:
+                    warnings.warn(
+                        f"Duplicate format name {name!r} from "
                         f"{ep.name!r}, skipping",
                         stacklevel=2,
                     )
                     continue
-                self._plugins[plugin.name] = plugin
+                self._plugins[name] = plugin
 
     def _ensure_discovered(self) -> None:
         """Trigger discovery if the cache is empty."""

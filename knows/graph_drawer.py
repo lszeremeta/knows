@@ -1,6 +1,7 @@
 # graph_drawer.py
 import io
 from collections import deque
+from typing import Any
 
 import networkx as nx
 
@@ -12,7 +13,7 @@ except ImportError:
     MATPLOTLIB_AVAILABLE = False
 
 try:
-    import tkinter
+    import tkinter  # noqa: F401 -- availability probe only
 
     TKINTER_AVAILABLE = True
 except Exception:
@@ -62,7 +63,7 @@ class GraphDrawer:
         # Sort nodes by degree (descending) to prioritize well-connected nodes
         nodes_by_degree = sorted(graph.nodes(), key=lambda n: graph.degree(n), reverse=True)
 
-        visited = set()
+        visited: set[Any] = set()
         for start_node in nodes_by_degree:
             if len(visited) >= max_nodes:
                 break
@@ -180,8 +181,10 @@ class GraphDrawer:
 
     def _draw_to_buffer(self, buffer: io.BytesIO, fmt: str) -> None:
         """Helper method for drawing the graph into a buffer for various formats."""
-        plt.figure()
-        self.draw()
-        plt.savefig(buffer, format=fmt, bbox_inches='tight')
-        buffer.seek(0)
-        plt.close()
+        figure = plt.figure()
+        try:
+            self.draw()
+            plt.savefig(buffer, format=fmt, bbox_inches='tight')
+            buffer.seek(0)
+        finally:
+            plt.close(figure)

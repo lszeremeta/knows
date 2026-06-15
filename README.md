@@ -77,7 +77,8 @@ Build-in graph structure:
 - Additional edge properties:
   - `lastMeetingCity`
   - `meetingCount` [1..10000]
-- Edges have random nodes, avoiding cycles.
+- Edges connect random pairs of distinct nodes, avoiding self-loops and duplicate edges (mutual edges A→B and B→A are
+  allowed).
 - If edges connect the same nodes in both directions, the paired edges share `lastMeetingCity`, `lastMeetingDate`, and
   `meetingCount` values.
 
@@ -202,11 +203,11 @@ The `-d`/`--draw` option requires Tkinter.
 
 ```shell
 usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
-             [-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
-             [--schema FILE]
+             [-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}]
+             [--schema FILE] [-l LOCALE]
              [-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,preferredContactMethod,friendCount} ...]]
-             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d] [-l N] [--no-limit] [--hide-info]
-             [output]
+             [-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]] [-ap] [-d] [--debug] [--limit N] [--no-limit]
+             [--hide-info] [output]
 ```
 
 > Available options may vary depending on the version. To display all available options with their descriptions use
@@ -224,24 +225,27 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
 - `-v`, `--version`: Show program version and exit.
-- `-f {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {yarspg,graphml,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
+- `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
   Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
   visualization.
 - `--schema FILE`: Path to JSON schema file defining custom node/edge types and properties. When specified,
   overrides `-np`, `-ep`, and `-ap` options. GQL-inspired schema format ([ISO/IEC 39075](https://www.iso.org/standard/76120.html)).
   See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for details.
-- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,friendCount,preferredContactMethod} ...]`:  
+- `-l LOCALE`, `--locale LOCALE`: Locale code for generated property values (e.g. `pl_PL`, `de_DE`, `ja_JP`). Default: `en_US`.
+  See the [list of supported locales](https://faker.readthedocs.io/en/master/locales.html).
+- `-np [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,preferredContactMethod,friendCount} ...], --node-props [{firstName,lastName,company,job,phoneNumber,favoriteColor,postalAddress,preferredContactMethod,friendCount} ...]`:
   Space-separated node properties. Available: `firstName`, `lastName`, `company`, `job`, `phoneNumber`, `favoriteColor`,
-  `postalAddress`, `preferredContactMethod` `friendCount`. Ignored when `--schema` is used.
+  `postalAddress`, `preferredContactMethod`, `friendCount`. Ignored when `--schema` is used.
 - `-ep [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`,  
   `--edge-props [{strength,lastMeetingCity,lastMeetingDate,meetingCount} ...]`:  
   Space-separated edge properties. Available: `strength`, `lastMeetingCity`, `lastMeetingDate`, `meetingCount`. Ignored when `--schema` is used.
 - `-ap`, `--all-props`: Use all available node and edge properties. Ignored when `--schema` is used.
 - `-d`, `--draw`: Show interactive graph window. Requires Tkinter. May not work in Docker.
+- `--debug`: Show full tracebacks instead of short error messages.
 
 ### Graphics output options (svg, png, jpg, pdf, -d)
 
-- `-l N`, `--limit N`: Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.
+- `--limit N`: Maximum nodes to display (default: 50). Shows subgraph centered on most connected nodes.
 - `--no-limit`: Show full graph without node limit.
 - `--hide-info`: Hide node count info (e.g., `50/200 nodes`) from output.
 
@@ -386,11 +390,11 @@ See [SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md) for ful
 15. Visualize a large graph with custom node limit:
 
 ```shell
-knows -n 500 -e 300 -f svg -l 100 > graph.svg
+knows -n 500 -e 300 -f svg --limit 100 > graph.svg
 # or
-docker run --rm lszeremeta/knows -n 500 -e 300 -f svg -l 100 > graph.svg
+docker run --rm lszeremeta/knows -n 500 -e 300 -f svg --limit 100 > graph.svg
 # or
-docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg -l 100 /data/graph.svg
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 500 -e 300 -f svg --limit 100 /data/graph.svg
 ```
 
 This limits the visualization to 100 nodes (default is 50), centered on the most connected nodes.
@@ -413,6 +417,24 @@ knows -n 300 -e 200 -f svg --hide-info > graph.svg
 docker run --rm lszeremeta/knows -n 300 -e 200 -f svg --hide-info > graph.svg
 # or
 docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 300 -e 200 -f svg --hide-info /data/graph.svg
+```
+
+18. Create a graph with nodes only (no edges):
+
+```shell
+knows -n 10 -e 0 -f graphml > nodes_only.graphml
+# or
+docker run --rm lszeremeta/knows -n 10 -e 0 -f graphml > nodes_only.graphml
+# or
+docker run --rm -v "$(pwd)":/data lszeremeta/knows -n 10 -e 0 -f graphml /data/nodes_only.graphml
+```
+
+19. Generate a graph with values in another language:
+
+```shell
+knows -n 10 -e 5 -l pl_PL -f cypher
+# or
+docker run --rm lszeremeta/knows -n 10 -e 5 -l pl_PL -f cypher
 ```
 
 > **Note:** On Windows PowerShell, replace `$(pwd)` with `${PWD}`. On Windows Command Prompt, use `%cd%`.

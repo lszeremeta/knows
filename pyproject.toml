@@ -90,8 +90,8 @@ classifiers = [
 
 [project.optional-dependencies]
 draw = ["matplotlib>=3.10.0", "scipy>=1.14.0"]
-test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
-dev =  ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "flake8>=7.0.0"]
+test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "ruff>=0.8.0", "mypy>=1.14.0"]
+dev = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "ruff>=0.8.0", "mypy>=1.14.0"]
 
 [project.urls]
 Homepage = "https://github.com/lszeremeta/knows"
@@ -109,7 +109,10 @@ builtin = "knows.builtin_formats:builtin_formats"
 include = ["knows"]
 
 [tool.setuptools.package-data]
-knows = ["schema.json"]
+knows = ["schema.json", "py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.mypy]
+ignore_missing_imports = true
