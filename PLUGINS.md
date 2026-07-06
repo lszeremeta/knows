@@ -20,6 +20,9 @@ xml = "my_pkg:factory"      Caches plugins             returns FormatResult
    choices.
 4. When the user picks a format, `plugin.convert(graph, ...)` is called and returns a `FormatResult`.
 
+Run `knows --version` to list all installed plugins with their providing distribution and format names. Broken
+plugins are reported there too, which makes it a quick way to debug plugin registration.
+
 ## Plugin Interface
 
 A format plugin is any Python object that has the following properties and method. No base class inheritance is
@@ -238,6 +241,7 @@ Key points:
 pip install -e ".[test]"
 knows -f pajek            # verify it works
 knows --help              # verify it appears in format list
+knows --version           # verify it appears in the plugin list
 pytest tests/ -v          # verify nothing broke
 ```
 

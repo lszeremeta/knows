@@ -174,7 +174,8 @@ See Docker examples in Practical Examples section.
 
 ### Install Tkinter for Graph Visualization
 
-The `-d`/`--draw` option requires Tkinter.
+The `-d`/`--draw` option requires Tkinter. You can check whether visualization is available in your environment
+with `knows --version`.
 
 - **Ubuntu**:
 
@@ -224,7 +225,9 @@ usage: knows [-h] [-n NODES] [-e EDGES] [-s SEED] [-v]
 - `-e EDGES`, `--edges EDGES`: Number of edges in the graph. Selected randomly if not specified.
 - `-s SEED`, `--seed SEED`: Seed for random number generation to ensure reproducible results (also between various
   output formats).
-- `-v`, `--version`: Show program version and exit.
+- `-v`, `--version`: Show program version, environment and plugin diagnostics, and exit. The report includes dependency
+  versions, visualization availability, install source (PyPI, Docker, local) and installed format plugins - paste it
+  into bug reports.
 - `-f {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}, --format {graphml,yarspg,csv,cypher,gexf,gml,svg,png,jpg,pdf,adjacency_list,multiline_adjacency_list,edge_list,json}`:
   Format to output the graph. Default: `yarspg`. The `svg`, `png`, `jpg` and `pdf` formats are for simple graph
   visualization.

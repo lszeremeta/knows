@@ -159,14 +159,30 @@ def test_cli_all_props_short_option(monkeypatch):
 
 
 def test_cli_version_option(monkeypatch, capsys):
-    """Ensure version option outputs current version and exits."""
+    """Ensure version option outputs the diagnostics report and exits."""
     monkeypatch.setattr('sys.argv', ['prog', '--version'])
     with pytest.raises(SystemExit) as excinfo:
         CommandLineInterface()
 
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
-    assert captured.out.strip() == f"knows {__version__}"
+    lines = captured.out.splitlines()
+    # First line must stay parseable for scripts relying on `knows --version`.
+    assert lines[0] == f"knows {__version__}"
+    assert "Dependencies:" in captured.out
+    assert "Visualization:" in captured.out
+    assert "Format plugins (knows.formats):" in captured.out
+
+
+def test_cli_version_short_option(monkeypatch, capsys):
+    """Ensure -v behaves the same as --version."""
+    monkeypatch.setattr('sys.argv', ['prog', '-v'])
+    with pytest.raises(SystemExit) as excinfo:
+        CommandLineInterface()
+
+    assert excinfo.value.code == 0
+    captured = capsys.readouterr()
+    assert captured.out.startswith(f"knows {__version__}\n")
 
 
 def test_cli_default_limit(monkeypatch):

@@ -1,6 +1,5 @@
 import argparse
 
-from . import __version__
 from .format_registry import FormatRegistry
 from .graph import (
     DEFAULT_EDGE_PROPS,
@@ -8,6 +7,24 @@ from .graph import (
     EDGE_PROPERTIES,
     NODE_PROPERTIES,
 )
+
+
+class _VersionReportAction(argparse.Action):
+    """Prints the version and environment diagnostics report and exits.
+
+    The report is built lazily (the diagnostics module is imported only
+    here), so a normal run never pays for probing optional dependencies.
+    """
+
+    def __init__(self, option_strings, dest=argparse.SUPPRESS,
+                 default=argparse.SUPPRESS, help=None):
+        super().__init__(option_strings=option_strings, dest=dest,
+                         default=default, nargs=0, help=help)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        from .diagnostics import build_version_report
+        print(build_version_report())
+        parser.exit()
 
 
 class CommandLineInterface:
@@ -66,9 +83,11 @@ class CommandLineInterface:
         parser.add_argument(
             "-v",
             "--version",
-            action="version",
-            version=f"%(prog)s {__version__}",
-            help="Show program version and exit.",
+            action=_VersionReportAction,
+            help=(
+                "Show program version, environment and plugin diagnostics, "
+                "and exit."
+            ),
         )
         parser.add_argument(
             "-f",

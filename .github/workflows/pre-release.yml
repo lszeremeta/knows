@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "main"
+  # Dispatched by the release workflow after the post-release version
+  # bump (GITHUB_TOKEN pushes do not trigger push workflows).
+  workflow_dispatch:
 
 concurrency:
   group: pre-release-${{ github.ref }}
@@ -46,6 +49,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history and tags for the dev version stamp
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -55,6 +60,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build
+      - name: Stamp dev version from git
+        # Give this build a unique PEP 440 dev version built from git state:
+        # <next-version>.dev<commits-since-last-release-tag>+g<commit-hash>.
+        # CI-only: nothing is committed.
+        run: |
+          STATIC=$(sed -n "s/^__version__ = '\(.*\)'$/\1/p" knows/__init__.py)
+          if [[ "$STATIC" == *.dev* ]] && BASE_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null); then
+            N=$(git rev-list "${BASE_TAG}..HEAD" --count)
+            HASH=$(git rev-parse --short=7 HEAD)
+            STAMPED="${STATIC%%.dev*}.dev${N}+g${HASH}"
+            sed -i "s/^__version__ = '.*'$/__version__ = '${STAMPED}'/" knows/__init__.py
+            sed -i "s/^version = \".*\"$/version = \"${STAMPED}\"/" pyproject.toml
+            echo "Stamped dev version: ${STAMPED}"
+          else
+            echo "Version ${STATIC} left as-is"
+          fi
       - name: Build package
         run: python -m build
       - name: Delete latest tag
@@ -79,6 +100,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history and tags for the dev version stamp
+      - name: Stamp dev version from git
+        # Same stamp as in the pre-release job, so the :latest image
+        # reports a unique dev version. CI-only: nothing is committed.
+        run: |
+          STATIC=$(sed -n "s/^__version__ = '\(.*\)'$/\1/p" knows/__init__.py)
+          if [[ "$STATIC" == *.dev* ]] && BASE_TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null); then
+            N=$(git rev-list "${BASE_TAG}..HEAD" --count)
+            HASH=$(git rev-parse --short=7 HEAD)
+            STAMPED="${STATIC%%.dev*}.dev${N}+g${HASH}"
+            sed -i "s/^__version__ = '.*'$/__version__ = '${STAMPED}'/" knows/__init__.py
+            sed -i "s/^version = \".*\"$/version = \"${STAMPED}\"/" pyproject.toml
+            echo "Stamped dev version: ${STAMPED}"
+          else
+            echo "Version ${STATIC} left as-is"
+          fi
       - name: Prepare
         id: prep
         run: |

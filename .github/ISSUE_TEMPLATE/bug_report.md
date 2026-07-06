@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help improve mizgra
+about: Create a report to help improve knows
 title: ''
 labels: bug
 assignees: ''
@@ -24,6 +24,15 @@ A clear and concise description of what you expected to happen.
 If applicable, add files sample and error message to help explain your problem.
 
 **Environment (please complete the following information):**
+
+Paste the full output of `knows --version` (it includes the knows version, Python, OS, dependency versions,
+visualization availability, install source and installed plugins):
+
+```text
+(paste knows --version output here)
+```
+
+If you cannot run `knows --version`, fill in manually:
 
 - OS: [e.g. Ubuntu 24.04.1, Windows 11]
 - Python distribution [e.g. Anaconda, built into the OS, Python.org, WinPython]

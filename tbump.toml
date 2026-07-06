@@ -2,9 +2,9 @@
 github_url = "https://github.com/lszeremeta/knows/"
 
 [version]
-current = "3.0.0"
+current = "4.0.0.dev0"
 
-# Example of a semver regexp.
+# Semver regexp with an optional PEP 440 .devN suffix.
 # Make sure this matches current_version before
 # using tbump
 regex = '''
@@ -13,7 +13,14 @@ regex = '''
   (?P<minor>\d+)
   \.
   (?P<patch>\d+)
+  (\.dev(?P<dev>\d+))?
   '''
+
+# Release flow:
+#   1. Release: tbump X.Y.Z (commits, tags vX.Y.Z -> triggers release workflow)
+#   2. The release workflow then bumps main to X.Y+1.0.dev0 automatically
+#      (reopen-development job), keeping `knows --version` on main honest
+#      about being a pre-release. Manual fallback: tbump X.Y+1.0.dev0 --no-tag
 
 [git]
 message_template = "Bump to {new_version}"
