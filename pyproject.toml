@@ -90,8 +90,9 @@ classifiers = [
 
 [project.optional-dependencies]
 draw = ["matplotlib>=3.10.0", "scipy>=1.14.0"]
-test = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "ruff>=0.8.0", "mypy>=1.14.0"]
-dev = ["matplotlib>=3.10.0", "scipy>=1.14.0", "pytest>=8.4.0", "ruff>=0.8.0", "mypy>=1.14.0"]
+all = ["knows[draw]"]
+test = ["knows[draw]", "pytest>=8.4.0", "ruff>=0.8.0", "mypy>=1.14.0"]
+dev = ["knows[test]"]
 
 [project.urls]
 Homepage = "https://github.com/lszeremeta/knows"

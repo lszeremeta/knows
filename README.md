@@ -5,10 +5,14 @@
 Knows is a powerful and user-friendly tool for generating property graphs. These graphs are crucial in many fields.
 Knows supports multiple output formats, schema files and basic visualization capabilities, making it a go-to tool for researchers, educators and data enthusiasts.
 
-## Quick Start
+## Quick Start ⚡
+
+Install with [uv](https://docs.astral.sh/uv/), [pipx](https://pipx.pypa.io/) or pip:
 
 ```shell
-pip install knows[draw]
+uv tool install "knows[all]"
+# or: pipx install "knows[all]"
+# or: pip install "knows[all]"
 ```
 
 ```shell
@@ -34,6 +38,11 @@ Or with Docker - no installation needed:
 docker run --rm lszeremeta/knows -n 10 -e 5 -f graphml
 ```
 
+Run `knows -h` to see all options. For more install methods see the Installation section, for all options and more
+examples see the Usage section below. Custom node/edge types are covered in
+[SCHEMA.md](https://github.com/lszeremeta/knows/blob/main/SCHEMA.md), writing your own output formats in
+[PLUGINS.md](https://github.com/lszeremeta/knows/blob/main/PLUGINS.md).
+
 ## Key Features 🚀
 
 - **Customizable Graph Generation**: Tailor your graphs by specifying the number of nodes and edges.
@@ -56,9 +65,9 @@ docker run --rm lszeremeta/knows -n 10 -e 5 -f graphml
 > **Note on reproducibility:** The `-s`/`--seed` option makes the random aspects of graph generation deterministic
 > within the same software environment. Results may still differ across versions of Python or dependencies.
 
-## Graph Structure
+## Graph Structure 🕸️
 
-Build-in graph structure:
+Built-in graph structure:
 
 - Generates graphs with specified or random nodes and edges.
 - Creates directed graphs.
@@ -106,16 +115,28 @@ For a step-by-step guide on creating and registering plugins (including visual f
 
 You can install knows via PyPI, Docker or run it from the source code.
 
-### Install via PyPI
+### Install via PyPI 📦
 
-1. **Installation**:
+1. **Installation** with [uv](https://docs.astral.sh/uv/), [pipx](https://pipx.pypa.io/) or pip:
 
    ```shell
-   pip install knows[draw]
+   uv tool install "knows[all]"
    ```
 
-   The `draw` installs a `matplotlib` and `scipy` libraries for graph visualization. You can omit the `[draw]` if you
-   don't need visualization and `svg` output generation.
+   ```shell
+   pipx install "knows[all]"
+   ```
+
+   ```shell
+   pip install "knows[all]"
+   ```
+
+   Knows is a command-line tool, so `uv tool install` and `pipx install` are the recommended options - they install
+   Knows into an isolated environment and make the `knows` command available globally.
+
+   The `all` extra installs all optional dependencies - currently the `matplotlib` and `scipy` libraries needed for
+   graph visualization (`svg`, `png`, `jpg` and `pdf` formats and the `-d` option). You can omit `[all]` if you
+   don't need visualization. `knows[all]` is an alias for `knows[draw]` - both work.
 
 2. **Running Knows**:
    ```shell
@@ -152,7 +173,7 @@ You can install knows via PyPI, Docker or run it from the source code.
 
 See Docker examples in Practical Examples section.
 
-### Python from Source
+### Python from Source 🐍
 
 1. **Clone Repository**:
 
@@ -164,7 +185,7 @@ See Docker examples in Practical Examples section.
 2. **Install Requirements**:
 
    ```shell
-   pip install .[draw]
+   pip install ".[all]"
    ```
 
 3. **Execute Knows**:
@@ -172,7 +193,7 @@ See Docker examples in Practical Examples section.
    python -m knows [options]
    ```
 
-### Install Tkinter for Graph Visualization
+### Install Tkinter for Graph Visualization 🖼️
 
 The `-d`/`--draw` option requires Tkinter. You can check whether visualization is available in your environment
 with `knows --version`.
